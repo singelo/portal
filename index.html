@@ -242,5 +242,42 @@
     </nav>
 
   </div>
+
+  <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxZorvfzApoMf39g2V0YOMZ_nKPlX77-XFuBvmgvZW0uECNFLtBWyXE1QqrN6c21aIDkg/exec';
+
+    async function carregarPedidos() {
+      const res = await fetch(`${API_URL}?action=getPedidos`);
+      const pedidos = await res.json();
+      renderPedidos(pedidos);
+    }
+
+    function renderPedidos(pedidos) {
+      const container = document.querySelector('.content');
+      container.innerHTML = '';
+
+      pedidos.forEach(p => {
+        container.innerHTML += `
+          <div class="card">
+            <div class="card-header">
+              <span>#${p.id} · ${p.origem}</span>
+              <span class="status ${p.status}">${p.status}</span>
+            </div>
+            <strong>${p.itens.join(', ')}</strong><br>
+            <span style="font-size:12px;color:var(--muted)">
+              ${p.observacao || ''}
+            </span>
+            <div class="actions">
+              <button class="btn-primary">Avançar</button>
+              <button class="btn-outline">Detalhes</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    carregarPedidos();
+  </script>
+
 </body>
 </html>

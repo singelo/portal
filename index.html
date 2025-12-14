@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+
+  <!-- VIEWPORT CORRETO PARA iOS / ANDROID -->
+  <meta name="viewport"
+        content="width=device-width,
+                 initial-scale=1,
+                 maximum-scale=1,
+                 user-scalable=no,
+                 viewport-fit=cover">
+
+  <!-- iOS full screen -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#020617">
+
+  <title>Portal Hamburgueria</title>
+
+  <style>
+    :root {
+      --primary: #ff5722;
+      --primary-dark: #e64a19;
+      --bg: #020617;
+      --bg-card: #0f172a;
+      --text: #f9fafb;
+      --muted: #94a3b8;
+      --success: #22c55e;
+      --warning: #facc15;
+      --danger: #ef4444;
+      --radius: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* APP CONTAINER */
+    .app {
+      width: 100%;
+      min-height: 100vh;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: calc(env(safe-area-inset-bottom) + 70px);
+    }
+
+    /* TOP BAR */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(2, 6, 23, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fb923c, #facc15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .brand h1 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .brand span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .content {
+      padding: 12px;
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+      color: var(--muted);
+    }
+
+    .card strong {
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .status {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid;
+    }
+
+    .status.preparo {
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+
+    .actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    button {
+      flex: 1;
+      padding: 8px;
+      border-radius: 999px;
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+    }
+
+    /* TAB BAR */
+    .tabbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(2, 6, 23, 0.98);
+      border-top: 1px solid rgba(148, 163, 184, 0.2);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0 env(safe-area-inset-bottom);
+      z-index: 30;
+    }
+
+    .tab {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 11px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .tab.active {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    /* DESKTOP AJUSTE */
+    @media (min-width: 768px) {
+      .app {
+        max-width: 420px;
+        margin: 0 auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">🍔</div>
+        <div>
+          <h1>Hamburgueria Demo</h1>
+          <span>Cozinha</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="card">
+        <div class="card-header">
+          <span>#1240 · Mesa 7</span>
+          <span class="status preparo">Em preparo</span>
+        </div>
+        <strong>1x X-Bacon duplo</strong><br>
+        <span style="font-size:12px;color:var(--muted)">
+          Obs: carne bem passada, sem maionese
+        </span>
+
+        <div class="actions">
+          <button class="btn-primary">Marcar pronto</button>
+          <button class="btn-outline">Detalhes</button>
+        </div>
+      </div>
+    </main>
+
+    <nav class="tabbar">
+      <button class="tab">🧾<span>Pedidos</span></button>
+      <button class="tab active">🍳<span>Cozinha</span></button>
+      <button class="tab">🛵<span>Entregas</span></button>
+      <button class="tab">👤<span>Clientes</span></button>
+    </nav>
+
+  </div>
+</body>
+</html>

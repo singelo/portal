@@ -1,283 +1,922 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-  <meta charset="UTF-8" />
-
-  <!-- VIEWPORT CORRETO PARA iOS / ANDROID -->
-  <meta name="viewport"
-        content="width=device-width,
-                 initial-scale=1,
-                 maximum-scale=1,
-                 user-scalable=no,
-                 viewport-fit=cover">
-
-  <!-- iOS full screen -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#020617">
-
-  <title>Portal Hamburgueria</title>
-
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
   <style>
-    :root {
-      --primary: #ff5722;
-      --primary-dark: #e64a19;
-      --bg: #020617;
-      --bg-card: #0f172a;
-      --text: #f9fafb;
-      --muted: #94a3b8;
-      --success: #22c55e;
-      --warning: #facc15;
-      --danger: #ef4444;
-      --radius: 14px;
-    }
+    * { box-sizing: border-box; }
 
-    * {
-      box-sizing: border-box;
+    body {
       margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
+      font-family: "Inter", sans-serif;
+      background: #f5f6fa;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      grid-template-rows: 70px 1fr;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    html, body {
+    .sidebar {
+      grid-row: 1 / span 2;
+      background: #1f2937;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .side-link {
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .side-link:hover { background: #374151; }
+
+    .header {
+      grid-column: 2;
+      grid-row: 1;
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 25px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .content {
+      grid-column: 2;
+      grid-row: 2;
+      overflow-y: auto;
+      padding: 25px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      background: #2563eb;
+      color: white;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn:hover { background: #1d4ed8; }
+
+    table {
       width: 100%;
-      height: 100%;
-      background: var(--bg);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      background: #f3f4f6;
+      font-weight: 600;
+    }
+
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    .modal {
+      background: white;
+      padding: 25px;
+      width: 90%;
+      max-width: 450px;
+      border-radius: 12px;
+    }
+
+    .input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    /* ------------- OS HEADER CDATA ------------- */
+    .os-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-top: 16px;
+      margin-bottom: 8px;
+    }
+
+    .os-header h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .os-date {
+      font-size: 12px;
+      color: #555;
+    }
+
+    /* ------------- MOBILE: <= 800px ------------- */
+
+    /* correções gerais de viewport / overflow */
+
+    html {
+      width: 100%;
       overflow-x: hidden;
       -webkit-text-size-adjust: 100%;
     }
 
-    /* APP CONTAINER */
-    .app {
-      width: 100%;
-      min-height: 100vh;
-      padding-top: env(safe-area-inset-top);
-      padding-bottom: calc(env(safe-area-inset-bottom) + 70px);
+    body {
+      max-width: 100vw;
+      overflow-x: hidden;
     }
 
-    /* TOP BAR */
-    .topbar {
+    .sidebar {
+      min-width: 0;
+    }
+
+    /* ===================== */
+    /*  LAYOUT MOBILE (JS)   */
+    /*  body.mobile          */
+    /* ===================== */
+
+    body.mobile {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background: #f5f6fa;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      font-size: 18px;      /* tudo maior no celular */
+      line-height: 1.4;
+      overflow-x: hidden;
+    }
+
+    /* SIDEBAR = BARRA DE NAVEGAÇÃO NO TOPO */
+    body.mobile .sidebar {
+      width: 100%;
+      background: #1f2937;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 12px;
+      overflow-x: auto;
       position: sticky;
       top: 0;
       z-index: 20;
-      background: rgba(2, 6, 23, 0.95);
-      backdrop-filter: blur(12px);
-      padding: 12px 16px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
 
-    .brand {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .logo {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #fb923c, #facc15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-    }
-
-    .brand h1 {
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .brand span {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .content {
-      padding: 12px;
-    }
-
-    /* CARDS */
-    .card {
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      padding: 12px;
-      margin-bottom: 10px;
-      border: 1px solid rgba(148, 163, 184, 0.15);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      margin-bottom: 6px;
-      color: var(--muted);
-    }
-
-    .card strong {
-      font-size: 13px;
-      color: var(--text);
-    }
-
-    .status {
-      font-size: 11px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid;
-    }
-
-    .status.preparo {
-      color: var(--warning);
-      border-color: var(--warning);
-    }
-
-    .actions {
-      display: flex;
-      gap: 6px;
-      margin-top: 8px;
-    }
-
-    button {
-      flex: 1;
-      padding: 8px;
-      border-radius: 999px;
-      border: none;
-      font-size: 12px;
+    body.mobile .sidebar-title {
+      font-size: 18px;
       font-weight: 600;
+      margin: 0 8px 0 0;
+      white-space: nowrap;
+    }
+
+    body.mobile .side-link {
+      padding: 8px 10px;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
+      white-space: nowrap;
     }
 
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--muted);
-      border: 1px solid rgba(148, 163, 184, 0.4);
-    }
-
-    /* TAB BAR */
-    .tabbar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(2, 6, 23, 0.98);
-      border-top: 1px solid rgba(148, 163, 184, 0.2);
+    /* HEADER LOGO ABAIXO DA BARRA */
+    body.mobile .header {
+      grid-column: auto;
+      grid-row: auto;
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
       display: flex;
-      justify-content: space-around;
-      padding: 8px 0 env(safe-area-inset-bottom);
-      z-index: 30;
-    }
-
-    .tab {
-      background: none;
-      border: none;
-      color: var(--muted);
-      font-size: 11px;
-      display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 2px;
+      justify-content: space-between;
+      padding: 0 14px;
+      height: 56px;
+      font-size: 18px;
+      font-weight: 600;
+      position: sticky;
+      top: 56px;  /* altura aproximada da barra */
+      z-index: 10;
     }
 
-    .tab.active {
-      color: var(--primary);
-      font-weight: 700;
+    /* CONTEÚDO LARGO E CONFORTÁVEL */
+    body.mobile .content {
+      grid-column: auto;
+      grid-row: auto;
+      padding: 12px 10px 20px;
+      flex: 1 1 auto;
+      overflow-y: auto;
     }
 
-    /* DESKTOP AJUSTE */
-    @media (min-width: 768px) {
-      .app {
-        max-width: 420px;
-        margin: 0 auto;
-      }
+    /* CARDS QUASE A LARGURA TODA */
+    body.mobile .card {
+      background: white;
+      padding: 16px 12px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      margin-bottom: 14px;
+      width: 100%;
     }
+
+    /* BOTÕES E INPUTS MAIORES (sem precisar de zoom) */
+    body.mobile .btn {
+      padding: 10px 16px;
+      font-size: 16px;
+      min-height: 44px;  /* guideline da Apple */
+    }
+
+    body.mobile .input {
+      font-size: 18px;
+      padding: 12px 10px;
+      min-height: 44px;
+    }
+
+    /* TABELAS: SCROLL HORIZONTAL SE PRECISAR */
+    body.mobile table {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    body.mobile th,
+    body.mobile td {
+      padding: 10px 6px;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: nowrap;
+      font-size: 16px;
+    }
+
+    body.mobile th {
+      background: #f3f4f6;
+      font-weight: 600;
+    }
+
+    /* MODAL QUASE FULL-WIDTH NO CELULAR */
+    body.mobile .modal-bg {
+      padding: 12px;
+      align-items: center;
+    }
+
+    body.mobile .modal {
+      background: white;
+      padding: 18px 14px;
+      width: 96vw;
+      max-width: 480px;
+      border-radius: 12px;
+    }
+
   </style>
 </head>
 
 <body>
-  <div class="app">
 
-    <header class="topbar">
-      <div class="brand">
-        <div class="logo">🍔</div>
-        <div>
-          <h1>Hamburgueria Demo</h1>
-          <span>Cozinha</span>
-        </div>
-      </div>
-    </header>
-
-    <main class="content">
-      <div class="card">
-        <div class="card-header">
-          <span>#1240 · Mesa 7</span>
-          <span class="status preparo">Em preparo</span>
-        </div>
-        <strong>1x X-Bacon duplo</strong><br>
-        <span style="font-size:12px;color:var(--muted)">
-          Obs: carne bem passada, sem maionese
-        </span>
-
-        <div class="actions">
-          <button class="btn-primary">Marcar pronto</button>
-          <button class="btn-outline">Detalhes</button>
-        </div>
-      </div>
-    </main>
-
-    <nav class="tabbar">
-      <button class="tab">🧾<span>Pedidos</span></button>
-      <button class="tab active">🍳<span>Cozinha</span></button>
-      <button class="tab">🛵<span>Entregas</span></button>
-      <button class="tab">👤<span>Clientes</span></button>
-    </nav>
-
-  </div>
-
-  <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxZorvfzApoMf39g2V0YOMZ_nKPlX77-XFuBvmgvZW0uECNFLtBWyXE1QqrN6c21aIDkg/exec';
-
-    async function carregarPedidos() {
-      const res = await fetch(`${API_URL}?action=getPedidos`);
-      const pedidos = await res.json();
-      renderPedidos(pedidos);
+<script>
+  (function() {
+    function ativaMobileSePreciso() {
+      var w = Math.min(window.innerWidth || 0, window.screen.width || 0);
+      var isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent || ""
+      );
+      if (isMobileUA || w <= 800) {
+        document.body.classList.add("mobile");
+      } else {
+        document.body.classList.remove("mobile");
+      }
     }
 
-    function renderPedidos(pedidos) {
-      const container = document.querySelector('.content');
-      container.innerHTML = '';
+    document.addEventListener("DOMContentLoaded", ativaMobileSePreciso);
+    window.addEventListener("resize", ativaMobileSePreciso);
+  })();
+</script>
 
-      pedidos.forEach(p => {
-        container.innerHTML += `
-          <div class="card">
-            <div class="card-header">
-              <span>#${p.id} · ${p.origem}</span>
-              <span class="status ${p.status}">${p.status}</span>
-            </div>
-            <strong>${p.itens.join(', ')}</strong><br>
-            <span style="font-size:12px;color:var(--muted)">
-              ${p.observacao || ''}
-            </span>
-            <div class="actions">
-              <button class="btn-primary">Avançar</button>
-              <button class="btn-outline">Detalhes</button>
-            </div>
-          </div>
-        `;
-      });
+<div class="sidebar">
+  <div class="sidebar-title">Sistema OS</div>
+  <div class="side-link" onclick="loadClientes()">Clientes</div>
+  <div class="side-link" onclick="loadOS()">Ordens de Serviço</div>
+</div>
+
+<div class="header">
+  <span id="header-title">Carregando...</span>
+  <button class="btn" onclick="sync()">⟳ Sync</button>
+</div>
+
+<div class="content" id="content">Carregando...</div>
+
+<script>
+/*-------------------------
+  DB LOCAL
+--------------------------*/
+let DB = { clientes: [], os: [], itens: [] };
+
+/*-------------------------
+  CONTROLE DE TELA ATUAL
+--------------------------*/
+let currentView = 'loading';      // 'loading' | 'clientes' | 'os-list' | 'os-detalhe'
+let currentOSId = null;           // id da OS aberta (se for os-detalhe)
+
+function setView(view, osId) {
+  currentView = view;
+  currentOSId = (typeof osId === 'undefined') ? null : osId;
+}
+
+/*-------------------------
+  DB FUNCTIONS (globais)
+--------------------------*/
+window.addItemToDB = function(item){
+  DB.itens.push(item);
+};
+window.updateItemInDB = function(id, newValues){
+  const idx = DB.itens.findIndex(i => Number(i[0]) === Number(id));
+  if (idx >= 0) DB.itens[idx] = newValues;
+};
+window.deleteItemFromDB = function(id){
+  DB.itens = DB.itens.filter(i => Number(i[0]) !== Number(id));
+};
+
+/*-------------------------
+  UTILS
+--------------------------*/
+function showModal(html){
+  const div = document.createElement("div");
+  div.className = "modal-bg";
+  div.innerHTML = `<div class="modal">${html}</div>`;
+  document.body.appendChild(div);
+}
+function closeModal(){ document.querySelector(".modal-bg")?.remove(); }
+
+function gerarIdOS(){
+  const ano = new Date().getFullYear();
+  const osAno = DB.os.slice(1).filter(o => String(o[0]).startsWith(String(ano)));
+
+  if (!osAno.length) return Number(ano + "001");
+
+  const nums = osAno.map(o => Number(String(o[0]).slice(4)));
+  const next = (Math.max(...nums) + 1).toString().padStart(3,"0");
+
+  return Number(ano + next);
+}
+
+/*-------------------------
+  SYNC
+--------------------------*/
+function sync(){
+  google.script.run.withSuccessHandler(d => {
+    DB = d;
+
+    switch (currentView) {
+      case 'loading':
+      case 'clientes':
+        // primeira carga ou se já estava em Clientes
+        loadClientes();
+        break;
+
+      case 'os-list':
+        // estava na listagem de OS
+        loadOS();
+        break;
+
+      case 'os-detalhe':
+        // estava dentro de uma OS
+        if (currentOSId != null) {
+          visualizarOS(currentOSId);
+        } else {
+          loadOS();
+        }
+        break;
+
+      default:
+        // se no futuro tiver mais telas, dá pra tratar aqui
+        break;
+    }
+  }).getAllData();
+}
+
+
+/*-------------------------
+  CLIENTES
+--------------------------*/
+function loadClientes(){
+  setView('clientes');
+
+  document.getElementById("header-title").innerText = "Clientes";
+
+  const data = DB.clientes.slice(1);
+  let html = `
+  <div class="card">
+    <button class="btn" onclick="modalNovoCliente()">+ Novo Cliente</button>
+    <table>
+      <tr>
+        <th style="width:130px; text-align:left;">Nome</th>
+        <th style="width:280px; text-align:left;">Telefone</th>
+        <th style="width:280px; text-align:left;">Status</th>
+        <th style="width:150px; text-align:left;">Ações</th>
+      </tr>
+  `;
+
+  data.forEach(r=>{
+    html += `
+        <tr>
+          <td>${r[1]}</td>
+          <td>${r[2]}</td>
+          <td>${r[6]}</td>
+          <td><button class="btn" style="background:#6b7280" onclick="alterarStatusCliente(${r[0]})">
+            Status
+          </button></td>
+        </tr>
+    `;
+  });
+
+  html += `</table></div>`;
+  document.getElementById("content").innerHTML = html;
+}
+
+function modalNovoCliente(){
+  showModal(`
+    <h2>Novo Cliente</h2>
+    <input class="input" id="nc_nome" placeholder="Nome">
+    <input class="input" id="nc_tel" placeholder="Telefone">
+    <input class="input" id="nc_end" placeholder="Endereço">
+    <input class="input" id="nc_obs" placeholder="Obs">
+    <input class="input" id="nc_cnpj" placeholder="CNPJ (opcional)">
+
+    <button class="btn" onclick="salvarNovoCliente()">Salvar</button>
+    <button class="btn" style="background:#999" onclick="closeModal()">Cancelar</button>
+  `);
+
+  // aplica máscara de CNPJ
+  maskCNPJ('nc_cnpj');
+}
+
+function salvarNovoCliente(){
+  const novo = [
+    Date.now(),
+    document.getElementById("nc_nome").value,
+    document.getElementById("nc_tel").value,
+    document.getElementById("nc_end").value,
+    document.getElementById("nc_obs").value,
+    document.getElementById("nc_cnpj").value,  // cnpj (opcional)
+    "Ativo"                                    // status inicial
+  ];
+
+  google.script.run.withSuccessHandler(() => {
+    DB.clientes.push(novo);
+    closeModal();
+    loadClientes();
+  }).addRow("Clientes", novo);
+}
+
+/*-------------------------
+  ORDENS DE SERVIÇO
+--------------------------*/
+function loadOS(){
+  setView('os-list'); 
+
+  document.getElementById("header-title").innerText = "Ordens de Serviço";
+
+  const data = DB.os.slice(1);
+  let html = `
+  <div class="card">
+    <button class="btn" onclick="modalNovaOS()">+ Criar OS</button>
+    <table>
+      <tr>
+        <th style="width:130px; text-align:left;">ID</th>
+        <th style="width:280px; text-align:left;">Cliente</th>
+        <th style="width:180px; text-align:left;">Status</th>
+        <th style="width:150px; text-align:left;">Ações</th>
+      </tr>
+  `;
+
+  data.forEach(r=>{
+    html += `
+      <tr>
+        <td>${r[0]}</td>
+        <td>${DB.clientes.find(c => String(c[0]) === String(r[2]))?.[1] || "-"}</td>
+        <td>${r[3]}</td>
+        <td><button class="btn" onclick="visualizarOS(${r[0]})">Abrir</button>
+        <button class="btn" style="background:#6b7280" onclick="alterarStatus(${r[0]})">
+          Status
+        </button></td>
+
+      </tr>
+    `;
+  });
+
+  html += `</table></div>`;
+  document.getElementById("content").innerHTML = html;
+}
+
+function modalNovaOS(){
+  let opt = "";
+  DB.clientes.slice(1).forEach(c=>{
+    opt += `<option value="${c[0]}">${c[1]}</option>`;
+  });
+
+  showModal(`
+    <h2>Nova OS</h2>
+    <select class="input" id="os_cliente">${opt}</select>
+    <input class="input" id="os_desc" placeholder="Descrição da OS">
+
+    <button class="btn" onclick="salvarNovaOS()">Salvar</button>
+    <button class="btn" style="background:#999" onclick="closeModal()">Cancelar</button>
+  `);
+}
+
+function salvarNovaOS(){
+  const id = gerarIdOS();
+  const hoje = new Date().toLocaleDateString("pt-BR");
+
+  const cliente = document.getElementById("os_cliente").value;
+  const descricao = document.getElementById("os_desc").value;
+
+  const nova = [ id, hoje, cliente, "Aberto", descricao ];
+
+  google.script.run.withSuccessHandler(()=> {
+    DB.os.push(nova);
+    closeModal();
+    loadOS();
+  }).addRow("OS", nova);
+}
+
+/*-------------------------
+  DETALHES DA OS
+--------------------------*/
+function toNumberBR(v) {
+  if (v == null || v === '') return 0;
+
+  // Se já é número, devolve direto
+  if (typeof v === 'number') {
+    return v;
+  }
+
+  // Se veio como string (ex.: "1.800,52")
+  return Number(
+    String(v)
+      .replace(/\./g, '')   // remove separador de milhar
+      .replace(',', '.')    // troca decimal
+  );
+}
+
+// -------------------------
+// MÁSCARAS DE INPUT
+// -------------------------
+// CNPJ
+function maskCNPJ(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  el.addEventListener('input', () => {
+    // mantém só dígitos e no máx. 14
+    let v = el.value.replace(/\D/g, '').slice(0, 14);
+
+    let p1 = v.slice(0, 2);
+    let p2 = v.slice(2, 5);
+    let p3 = v.slice(5, 8);
+    let p4 = v.slice(8, 12);
+    let p5 = v.slice(12, 14);
+
+    let out = '';
+    if (p1) out = p1;
+    if (p2) out += '.' + p2;
+    if (p3) out += '.' + p3;
+    if (p4) out += '/' + p4;
+    if (p5) out += '-' + p5;
+
+    el.value = out;
+  });
+}
+
+// Só inteiro, com limite máximo (ex.: 99)
+function maskInteger(id, max) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  el.addEventListener('input', () => {
+    let v = el.value.replace(/\D/g, ''); // remove tudo que não é dígito
+
+    if (v !== '') {
+      let n = parseInt(v, 10);
+      if (!isNaN(max) && n > max) n = max;
+      v = String(n);
     }
 
-    carregarPedidos();
-  </script>
+    el.value = v;
+  });
+}
+
+// Só número + vírgula, no formato BR (ex.: 123,45)
+function maskMoneyBR(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  el.addEventListener('input', () => {
+    // mantém apenas dígitos e vírgula
+    let v = el.value.replace(/[^0-9,]/g, '');
+
+    // garante apenas UMA vírgula
+    const parts = v.split(',');
+    if (parts.length > 2) {
+      v = parts[0] + ',' + parts.slice(1).join('');
+    }
+
+    el.value = v;
+  });
+}
+
+function visualizarOS(id){
+  setView('os-detalhe', id);
+
+  document.getElementById("header-title").innerText = "Detalhes da OS";
+
+  const os = DB.os.find(r=>String(r[0])===String(id));
+  const itens = DB.itens.filter(r=>String(r[1])===String(id));
+
+  let total = itens.reduce((s,i)=>s + toNumberBR(i[6]), 0);
+
+  let html = `
+    <div class="card">
+      <h2>OS #${os[0]}</h2>
+      <p><b>Cliente:</b> ${DB.clientes.find(c => String(c[0]) === String(os[2]))?.[1] || "—"}</p>
+      <p><b>Status:</b> ${os[3]}</p>
+      <p><b>Descrição:</b> ${os[4]}</p>
+
+      <button class="btn" onclick="modalNovoItem(${os[0]})">+ Novo Item</button>
+      <button class="btn" onclick="gerarPDF(${os[0]})">📄 PDF</button>
+    </div>
+
+    <div class="card">
+      <h3>Itens</h3>
+      <table>
+        <tr>
+          <th style="width:130px; text-align:left;">Tipo</th>
+          <th style="width:130px; text-align:left;">Descrição</th>
+          <th style="width:130px; text-align:left;">Qtd</th>
+          <th style="width:130px; text-align:left;">Preço (UN)</th>
+          <th style="width:130px; text-align:left;">Total</th>
+          <th style="width:130px; text-align:left;">Ações</th>
+        </tr>
+
+  `;
+
+  itens.forEach(it=>{
+    html += `
+      <tr>
+        <td>${it[2]}</td>
+        <td>${it[3]}</td>
+        <td>${it[4]}</td>
+        <td class="right">
+          R$ ${toNumberBR(it[5]).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+        </td>
+
+        <td class="right">
+          R$ ${toNumberBR(it[6]).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
+        </td>
+        <td>
+          <button class="btn" onclick="modalEditarItem(${it[0]})">Editar</button>
+          <button class="btn" style="background:#d11" onclick="excluirItem(${it[0]}, ${id})">Excluir</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+      </table>
+      <h3>Total: R$ ${total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</h3>
+    </div>
+  `;
+
+  document.getElementById("content").innerHTML = html;
+}
+
+/*-------------------------
+  ITENS
+--------------------------*/
+function modalNovoItem(os_id){
+  showModal(`
+    <h2>Novo Item</h2>
+    <select class="input" id="ni_tipo">
+      <option value="Produto">Produto</option>
+      <option value="Serviço">Serviço</option>
+    </select>
+    <input class="input" id="ni_desc" placeholder="Descrição">
+    <input class="input" id="ni_qtd" placeholder="Quantidade" inputmode="numeric">
+    <input class="input" id="ni_preco" placeholder="Preço" inputmode="decimal">
+
+    <button class="btn" onclick="salvarNovoItem(${os_id})">Salvar</button>
+    <button class="btn" style="background:#999" onclick="closeModal()">Cancelar</button>
+  `);
+
+  // aplica máscaras
+  maskInteger('ni_qtd', 99);   // só 0–99
+  maskMoneyBR('ni_preco');     // número + vírgula
+}
+
+function salvarNovoItem(os_id){
+  const qtd = toNumberBR(document.getElementById("ni_qtd").value);
+  const preco = toNumberBR(document.getElementById("ni_preco").value);
+
+  const newItem = [
+    Date.now(),
+    os_id,
+    document.getElementById("ni_tipo").value,
+    document.getElementById("ni_desc").value,
+    qtd,
+    preco,
+    qtd * preco
+  ];
+
+  google.script.run.withSuccessHandler(()=>{
+    // GARANTE QUE O DB LOCAL USE SOMENTE NÚMEROS
+    newItem[4] = Number(newItem[4]);
+    newItem[5] = Number(newItem[5]);
+    newItem[6] = Number(newItem[6]);
+
+    addItemToDB(newItem);
+    closeModal();
+    visualizarOS(os_id);
+  }).addRow("ItensOS", newItem);
+}
+
+function modalEditarItem(id_item){
+  const item = DB.itens.find(i => Number(i[0]) === Number(id_item));
+
+  // formata o preço para "1.800,52"
+  const precoFormatado = toNumberBR(item[5]).toLocaleString(
+    "pt-BR",
+    { minimumFractionDigits: 2 }
+  );
+
+  showModal(`
+    <h2>Editar Item</h2>
+
+    <select class="input" id="ei_tipo">
+      <option ${item[2] === 'Produto' ? 'selected' : ''}>Produto</option>
+      <option ${item[2] === 'Serviço' ? 'selected' : ''}>Serviço</option>
+    </select>
+
+    <input class="input" id="ei_desc" value="${item[3]}">
+    <input class="input" id="ei_qtd" value="${item[4]}" inputmode="numeric">
+    <input class="input" id="ei_preco" value="${precoFormatado}" inputmode="decimal">
+
+    <button class="btn" onclick="salvarEditarItem(${id_item})">Salvar</button>
+    <button class="btn" style="background:#999" onclick="closeModal()">Cancelar</button>
+  `);
+
+  // aplica máscaras
+  maskInteger('ei_qtd', 99);
+  maskMoneyBR('ei_preco');
+}
+
+function salvarEditarItem(id_item){
+  const old = DB.itens.find(i => Number(i[0]) === Number(id_item));
+  const os_id = old[1];
+
+  const tipo = document.getElementById("ei_tipo").value;
+  const desc = document.getElementById("ei_desc").value;
+  const qtd  = toNumberBR(document.getElementById("ei_qtd").value);
+  const preco = toNumberBR(document.getElementById("ei_preco").value);
+
+  const newValues = [
+    id_item,
+    os_id,
+    tipo,
+    desc,
+    Number(qtd),
+    Number(preco),
+    Number(qtd * preco)
+  ];
+
+  google.script.run.withSuccessHandler(() => {
+    updateItemInDB(id_item, newValues);
+    closeModal();
+    visualizarOS(os_id);
+  }).updateRow("ItensOS", id_item, 0, newValues);
+}
+function excluirItem(id_item, os_id){
+  if (!confirm("Excluir item?")) return;
+
+  google.script.run.withSuccessHandler(()=>{
+    deleteItemFromDB(id_item);
+    visualizarOS(os_id);
+  }).deleteRow("ItensOS", id_item, 0);
+}
+
+/*-------------------------
+  STATUS OS e CLIENTES
+--------------------------*/
+function alterarStatusCliente(idCliente) {
+  const cli = DB.clientes.find(c => String(c[0]) === String(idCliente));
+  const atual = cli && cli[6] ? cli[6] : "Ativo";
+
+  showModal(`
+    <h2>Alterar Status do Cliente</h2>
+
+    <select id="new_cli_status" class="input">
+      <option ${atual === "Ativo" ? "selected" : ""}>Ativo</option>
+      <option ${atual === "Inativo" ? "selected" : ""}>Inativo</option>
+    </select>
+
+    <button class="btn" onclick="salvarStatusCliente(${idCliente})">Salvar</button>
+    <button class="btn" style="background:#999" onclick="closeModal()">Cancelar</button>
+  `);
+}
+
+function salvarStatusCliente(idCliente) {
+  const novoStatus = document.getElementById("new_cli_status").value;
+
+  const cli = DB.clientes.find(c => String(c[0]) === String(idCliente));
+  if (!cli) return;
+
+  // atualiza no array local
+  cli[6] = novoStatus;
+
+  // atualiza na planilha
+  google.script.run.withSuccessHandler(() => {
+    closeModal();
+    loadClientes();
+  }).updateRow("Clientes", idCliente, 0, cli);
+}
+
+function alterarStatus(idOS) {
+  const os = DB.os.find(o => String(o[0]) === String(idOS));
+  const atual = os ? os[3] : "Aberto";
+
+  showModal(`
+    <h2>Alterar Status</h2>
+
+    <select id="new_status" class="input">
+      <option ${atual === "Aberto" ? "selected" : ""}>Aberto</option>
+      <option ${atual === "Em andamento" ? "selected" : ""}>Em andamento</option>
+      <option ${atual === "Finalizado" ? "selected" : ""}>Finalizado</option>
+      <option ${atual === "Cancelado" ? "selected" : ""}>Cancelado</option>
+      <option ${atual === "Aguardando pagamento" ? "selected" : ""}>Aguardando pagamento</option>
+    </select>
+
+    <button class="btn" onclick="salvarStatus(${idOS})">Salvar</button>
+    <button class="btn" style="background:#999" onclick="closeModal()">Cancelar</button>
+  `);
+}
+
+function salvarStatus(idOS) {
+  const novo = document.getElementById("new_status").value;
+
+  const os = DB.os.find(o => String(o[0]) === String(idOS));
+  if (!os) return;
+
+  // Atualiza no banco local
+  os[3] = novo;
+
+  // Atualiza no Sheets
+  google.script.run.withSuccessHandler(() => {
+    closeModal();
+    loadOS();
+  }).updateRow("OS", idOS, 0, os);
+}
+
+/*-------------------------
+  PDF
+--------------------------*/
+function gerarPDF(id){
+  google.script.run.withSuccessHandler(url=>{
+    window.open(url,"_blank");
+  }).gerarPDF(id);
+}
+
+/*-------------------------
+  INIT
+--------------------------*/
+sync();
+
+</script>
 
 </body>
 </html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f6f7f8">
+  <title>Financeiro</title>
+  <link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="row container">
+      <a class="back" href="../">← Início</a>
+      <div style="min-width:0;">
+        <div class="title">Financeiro</div>
+        <div class="title-sub">Protegido por senha (backend)</div>
+      </div>
+      <span class="badge neu">restrito</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="h1" style="margin-top:0;">Acesso restrito</div>
+      <div class="small">
+        A validação de senha acontece somente no Apps Script.
+        Este frontend não armazena credenciais.
+      </div>
+
+      <label class="label" for="pwd">Senha</label>
+      <input id="pwd" class="input" type="password" placeholder="••••••••" autocomplete="current-password">
+
+      <div class="actions">
+        <button class="btn primary" type="button" disabled>Entrar</button>
+        <button class="btn ghost" type="button" disabled>Esqueci</button>
+      </div>
+
+      <div class="small" style="margin-top:10px;">
+        (Vamos conectar isso ao endpoint de autenticação do financeiro no backend.)
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section class="card locked">
+      <div class="blur">
+        <div class="h2">Resumo do dia</div>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="v">R$ --</div>
+            <div class="l">Vendas</div>
+          </div>
+          <div class="kpi">
+            <div class="v">--</div>
+            <div class="l">Pedidos</div>
+          </div>
+          <div class="kpi">
+            <div class="v">R$ --</div>
+            <div class="l">Taxas</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="small">
+          Este bloco só será exibido após autenticação válida no backend.
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      Financeiro nunca é público. Sempre protegido por senha validada no backend.
+    </footer>
+  </main>
+
+</body>
+</html>

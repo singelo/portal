@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f6f7f8">
+  <title>Pedidos</title>
+  <link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="row container">
+      <a class="back" href="../">← Início</a>
+      <div style="min-width:0;">
+        <div class="title">Pedidos</div>
+        <div class="title-sub">Visão geral e monitoramento</div>
+      </div>
+      <button class="btn" type="button" disabled>Atualizar</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="kpis" aria-label="Indicadores">
+      <div class="kpi">
+        <div class="v">--</div>
+        <div class="l">Abertos</div>
+      </div>
+      <div class="kpi">
+        <div class="v">--</div>
+        <div class="l">Atrasados</div>
+      </div>
+      <div class="kpi">
+        <div class="v">--</div>
+        <div class="l">Hoje</div>
+      </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <div class="h2">Demonstração de layout</div>
+
+    <section class="list">
+      <article class="card">
+        <header class="order-head">
+          <div>
+            <div class="order-id">Pedido #1042</div>
+            <div class="small">iFood • 12 min</div>
+          </div>
+          <div class="order-meta">
+            <span class="badge warn">Em preparo</span>
+            <span class="badge neu">Retirada</span>
+          </div>
+        </header>
+
+        <div class="small">
+          Visão do gestor: status, tempo e observações operacionais (sem excesso).
+        </div>
+      </article>
+
+      <article class="card">
+        <header class="order-head">
+          <div>
+            <div class="order-id">Pedido #1045</div>
+            <div class="small">iFood • 28 min</div>
+          </div>
+          <div class="order-meta">
+            <span class="badge bad">Atraso</span>
+            <span class="badge ok">Em rota</span>
+          </div>
+        </header>
+
+        <div class="small">Sem JSON cru. Apenas dados normalizados.</div>
+      </article>
+    </section>
+
+    <div class="divider"></div>
+
+    <div class="small">
+      Quando conectarmos ao backend, aqui entram também logs resumidos e estados por etapa (events, orders, actions).
+    </div>
+  </main>
+
+</body>
+</html>

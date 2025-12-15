@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f6f7f8">
+  <title>Entregas</title>
+  <link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="row container">
+      <a class="back" href="../">← Início</a>
+      <div style="min-width:0;">
+        <div class="title">Entregas</div>
+        <div class="title-sub">Endereço, rota e status</div>
+      </div>
+      <button class="btn" type="button" disabled>Atualizar</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="tabs" aria-label="Filtros de status">
+      <span class="pill active">A retirar</span>
+      <span class="pill">Em rota</span>
+      <span class="pill">Entregue</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="h2">Demonstração de layout</div>
+
+    <section class="list">
+      <article class="card">
+        <header class="order-head">
+          <div>
+            <div class="order-id">Pedido #1042</div>
+            <div class="small">Pronto para retirada</div>
+          </div>
+          <div class="order-meta">
+            <span class="badge warn">A retirar</span>
+          </div>
+        </header>
+
+        <div style="font-weight:800; margin-bottom:4px;">Rua Exemplo, 123</div>
+        <div class="small">Bairro Centro • Apto 12 • Portão preto</div>
+
+        <div class="actions">
+          <button class="btn primary" type="button" disabled>Iniciar rota</button>
+          <button class="btn" type="button" disabled>Abrir mapa</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <header class="order-head">
+          <div>
+            <div class="order-id">Pedido #1045</div>
+            <div class="small">Saiu para entrega</div>
+          </div>
+          <div class="order-meta">
+            <span class="badge ok">Em rota</span>
+          </div>
+        </header>
+
+        <div style="font-weight:800; margin-bottom:4px;">Av. Principal, 980</div>
+        <div class="small">Bloco B • Casa 3 • Deixar na recepção</div>
+
+        <div class="actions">
+          <button class="btn" type="button" disabled>Marcar entregue</button>
+          <button class="btn" type="button" disabled>Atualizar status</button>
+        </div>
+      </article>
+    </section>
+
+    <div class="divider"></div>
+
+    <div class="small">
+      O motoboy não vê itens nem valores. Apenas endereço, referência e status.
+    </div>
+  </main>
+
+</body>
+</html>

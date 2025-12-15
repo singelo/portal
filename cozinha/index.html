@@ -1,9 +1,93 @@
-<main>
-  <h1>Cozinha</h1>
-  <div id="lista"></div>
-</main>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f6f7f8">
+  <title>Cozinha</title>
+  <link rel="stylesheet" href="../assets/css/base.css">
+</head>
+<body>
 
-<script src="/assets/js/api.js"></script>
-<script>
-  carregarCozinha();
-</script>
+  <header class="topbar">
+    <div class="row container">
+      <a class="back" href="../">← Início</a>
+      <div style="min-width:0;">
+        <div class="title">Cozinha</div>
+        <div class="title-sub">Itens + observações + tempo</div>
+      </div>
+      <button class="btn" type="button" disabled>Atualizar</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="tabs" aria-label="Filtros de status">
+      <span class="pill active">Novos</span>
+      <span class="pill">Em preparo</span>
+      <span class="pill">Prontos</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="h2">Demonstração de layout</div>
+
+    <section class="list">
+      <article class="card">
+        <header class="order-head">
+          <div>
+            <div class="order-id">Pedido #1042</div>
+            <div class="small">iFood • recebido</div>
+          </div>
+          <div class="order-meta">
+            <span class="badge warn">12 min</span>
+            <span class="badge neu">NOVO</span>
+          </div>
+        </header>
+
+        <ul class="items">
+          <li><span class="qty">1x</span> X-Burger</li>
+          <li><span class="qty">2x</span> Batata média</li>
+          <li><span class="qty">1x</span> Refrigerante lata</li>
+        </ul>
+
+        <div class="note">
+          <div class="note-label">Observação</div>
+          <div>Sem cebola. Maionese à parte.</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <header class="order-head">
+          <div>
+            <div class="order-id">Pedido #1043</div>
+            <div class="small">iFood • em preparo</div>
+          </div>
+          <div class="order-meta">
+            <span class="badge warn">18 min</span>
+            <span class="badge ok">PREPARO</span>
+          </div>
+        </header>
+
+        <ul class="items">
+          <li><span class="qty">1x</span> Prato feito</li>
+          <li><span class="qty">1x</span> Suco natural</li>
+        </ul>
+
+        <div class="note">
+          <div class="note-label">Observação</div>
+          <div>Feijão separado do arroz.</div>
+        </div>
+      </article>
+    </section>
+
+    <div class="divider"></div>
+
+    <div class="small">
+      Quando conectarmos ao backend, esta lista será preenchida com pedidos normalizados.
+      A cozinha não verá cliente, endereço ou valores.
+    </div>
+  </main>
+
+</body>
+</html>

@@ -3,17 +3,71 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#f6f7f8">
   <title>Portal Operacional</title>
-  <link rel="stylesheet" href="/assets/css/base.css"/>
+  <link rel="stylesheet" href="assets/css/base.css">
 </head>
 <body>
-  <main class="hub">
-    <h1>Portal Operacional</h1>
 
-    <a class="card" href="/portal/pedidos/">📦 Pedidos</a>
-    <a class="card" href="/portal/cozinha/">🍳 Cozinha</a>
-    <a class="card" href="/portal/motoboy/">🛵 Entregas</a>
-    <a class="card card-lock" href="/portal/financeiro/">🔒 Financeiro</a>
+  <header class="topbar">
+    <div class="row container">
+      <div>
+        <div class="brand">Portal Operacional</div>
+        <div class="subtitle">iFood • visão por função</div>
+      </div>
+      <span class="badge neu">v0</span>
+    </div>
+  </header>
+
+  <main class="container">
+    <section>
+      <div class="h1">Escolha uma área</div>
+      <div class="small">Minimalista, rápido, sem credenciais no navegador.</div>
+    </section>
+
+    <section class="grid cols-2" style="margin-top:12px;">
+      <a class="tile" href="pedidos/">
+        <div class="icon">📦</div>
+        <div class="tile-body">
+          <div class="tile-title">Pedidos</div>
+          <div class="tile-sub">Visão geral e status</div>
+        </div>
+        <div class="chev">›</div>
+      </a>
+
+      <a class="tile" href="cozinha/">
+        <div class="icon">🍳</div>
+        <div class="tile-body">
+          <div class="tile-title">Cozinha</div>
+          <div class="tile-sub">Itens, observações e tempo</div>
+        </div>
+        <div class="chev">›</div>
+      </a>
+
+      <a class="tile" href="motoboy/">
+        <div class="icon">🛵</div>
+        <div class="tile-body">
+          <div class="tile-title">Entregas</div>
+          <div class="tile-sub">Endereço, rota e status</div>
+        </div>
+        <div class="chev">›</div>
+      </a>
+
+      <a class="tile" href="financeiro/">
+        <div class="icon">🔒</div>
+        <div class="tile-body">
+          <div class="tile-title">Financeiro</div>
+          <div class="tile-sub">Protegido por senha no backend</div>
+        </div>
+        <div class="chev">›</div>
+      </a>
+    </section>
+
+    <footer class="footer">
+      Frontend público e não confiável. Tokens e senhas ficam no Apps Script.
+    </footer>
   </main>
+
 </body>
 </html>

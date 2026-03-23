@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,22 +8,26 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
+
 <body>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <div class="brand">
-        <img src="assets/img/logo-rm.png" alt="RM Manutenções" class="brand-logo" />
-        <div class="brand-text">
-          <strong>RM Manutenções</strong>
-          <span>Portal operacional</span>
+      <div class="sidebar-head">
+        <div class="brand">
+          <img src="assets/img/logo-rm.png" alt="RM Manutenções" class="brand-logo" />
+          <div class="brand-text">
+            <strong>RM Manutenções</strong>
+            <span>Portal operacional</span>
+          </div>
         </div>
+
+        <button class="icon-btn sidebar-close mobile-only" id="closeSidebarBtn" aria-label="Fechar menu">
+          ✕
+        </button>
       </div>
 
       <nav class="nav">
@@ -41,13 +46,6 @@
           <span>Ordens de Serviço</span>
         </button>
       </nav>
-
-      <div class="sidebar-footer">
-        <div class="sidebar-note">
-          GitHub Pages na vitrine.  
-          Apps Script no motor.
-        </div>
-      </div>
     </aside>
 
     <div class="app-main">
@@ -165,12 +163,7 @@
 
               <div class="toolbar">
                 <div class="search-box">
-                  <input
-                    type="text"
-                    id="clienteSearch"
-                    class="input"
-                    placeholder="Buscar cliente..."
-                  />
+                  <input type="text" id="clienteSearch" class="input" placeholder="Buscar cliente..." />
                 </div>
                 <button class="btn btn-primary" id="novoClienteBtn">+ Novo cliente</button>
               </div>
@@ -209,12 +202,7 @@
 
               <div class="toolbar">
                 <div class="search-box">
-                  <input
-                    type="text"
-                    id="osSearch"
-                    class="input"
-                    placeholder="Buscar OS ou cliente..."
-                  />
+                  <input type="text" id="osSearch" class="input" placeholder="Buscar OS ou cliente..." />
                 </div>
                 <button class="btn btn-primary" id="novaOsBtn">+ Nova OS</button>
               </div>
@@ -327,51 +315,28 @@
 
   <div id="modalRoot"></div>
   <div id="toastRoot"></div>
+  <div id="loginScreen" class="login-screen">
 
+    <div class="login-card">
+
+      <img src="assets/img/logo-rm.png" class="login-logo">
+
+      <h2>RM Manutenções</h2>
+
+      <input type="password" id="loginPassword" class="input" placeholder="Digite a senha">
+
+      <button id="loginBtn" class="btn btn-primary">
+        Entrar
+      </button>
+
+      <p id="loginError" class="login-error"></p>
+
+    </div>
+
+  </div>
   <!-- placeholder do JS -->
-  <!-- depois criamos esse arquivo -->
-  <!-- <script src="assets/js/app.js" defer></script> -->
-
-  <script>
-    const menuToggle = document.getElementById("menuToggle");
-    const sidebar = document.getElementById("sidebar");
-    const navLinks = document.querySelectorAll(".nav-link");
-    const views = document.querySelectorAll(".view");
-    const pageTitle = document.getElementById("pageTitle");
-    const pageSubtitle = document.getElementById("pageSubtitle");
-
-    const viewMap = {
-      dashboard: { title: "Início", subtitle: "Controle de clientes, OS e itens" },
-      clientes: { title: "Clientes", subtitle: "Cadastro e consulta" },
-      "os-list": { title: "Ordens de Serviço", subtitle: "Listagem geral" },
-      "os-detail": { title: "Detalhes da OS", subtitle: "Itens, status e PDF" }
-    };
-
-    menuToggle?.addEventListener("click", () => {
-      sidebar.classList.toggle("is-open");
-    });
-
-    navLinks.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const view = btn.dataset.view;
-        if (!view) return;
-
-        navLinks.forEach((item) => item.classList.remove("is-active"));
-        btn.classList.add("is-active");
-
-        views.forEach((section) => section.classList.remove("is-active"));
-        document.getElementById(`view-${view}`)?.classList.add("is-active");
-
-        pageTitle.textContent = viewMap[view]?.title || "Portal";
-        pageSubtitle.textContent = viewMap[view]?.subtitle || "";
-
-        sidebar.classList.remove("is-open");
-      });
-    });
-
-    document.getElementById("voltarOsBtn")?.addEventListener("click", () => {
-      document.querySelector('[data-view="os-list"]')?.click();
-    });
-  </script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/api.js"></script>
 </body>
+
 </html>

@@ -25,26 +25,24 @@ async function apiRequest(action, payload = {}, auth = true) {
   return data.data;
 }
 
-async function login(password) {
+async function login(password){
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action: "login",
-      password
-    })
+  const body = new URLSearchParams();
+  body.append("action","login");
+  body.append("password",password);
+
+  const res = await fetch(API_URL,{
+    method:"POST",
+    body
   });
 
   const data = await res.json();
 
-  if (!data.ok) {
-    throw new Error(data.error || "Erro no login");
+  if(!data.ok){
+    throw new Error(data.error);
   }
 
-  sessionStorage.setItem("rm_token", data.data.token);
+  sessionStorage.setItem("rm_token",data.data.token);
 
   return true;
 }

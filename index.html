@@ -2,72 +2,376 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="theme-color" content="#f6f7f8">
-  <title>Portal Operacional</title>
-  <link rel="stylesheet" href="assets/css/base.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RM Manutenções | Portal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
-
-  <header class="topbar">
-    <div class="row container">
-      <div>
-        <div class="brand">Portal Operacional</div>
-        <div class="subtitle">iFood • visão por função</div>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <img src="assets/img/logo-rm.png" alt="RM Manutenções" class="brand-logo" />
+        <div class="brand-text">
+          <strong>RM Manutenções</strong>
+          <span>Portal operacional</span>
+        </div>
       </div>
-      <span class="badge neu">v0</span>
+
+      <nav class="nav">
+        <button class="nav-link is-active" data-view="dashboard">
+          <span>🏠</span>
+          <span>Início</span>
+        </button>
+
+        <button class="nav-link" data-view="clientes">
+          <span>👥</span>
+          <span>Clientes</span>
+        </button>
+
+        <button class="nav-link" data-view="os-list">
+          <span>🧾</span>
+          <span>Ordens de Serviço</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-note">
+          GitHub Pages na vitrine.  
+          Apps Script no motor.
+        </div>
+      </div>
+    </aside>
+
+    <div class="app-main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-only" id="menuToggle" aria-label="Abrir menu">
+            ☰
+          </button>
+          <div>
+            <h1 class="page-title" id="pageTitle">Início</h1>
+            <p class="page-subtitle" id="pageSubtitle">
+              Controle de clientes, OS e itens
+            </p>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-secondary" id="syncBtn">Atualizar</button>
+          <button class="btn btn-primary" id="quickNewOsBtn">+ Nova OS</button>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- DASHBOARD -->
+        <section class="view is-active" id="view-dashboard">
+          <div class="stats-grid">
+            <article class="stat-card">
+              <span class="stat-label">Clientes ativos</span>
+              <strong class="stat-value" id="statClientes">0</strong>
+            </article>
+
+            <article class="stat-card">
+              <span class="stat-label">OS abertas</span>
+              <strong class="stat-value" id="statOSAbertas">0</strong>
+            </article>
+
+            <article class="stat-card">
+              <span class="stat-label">OS canceladas</span>
+              <strong class="stat-value" id="statOSCanceladas">0</strong>
+            </article>
+
+            <article class="stat-card">
+              <span class="stat-label">Total em OS</span>
+              <strong class="stat-value" id="statValorTotal">R$ 0,00</strong>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Últimas ordens</h2>
+                  <p>Resumo rápido do que está rolando</p>
+                </div>
+              </div>
+
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>OS</th>
+                      <th>Cliente</th>
+                      <th>Status</th>
+                      <th>Data</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboardOsTbody">
+                    <tr>
+                      <td colspan="4" class="empty-cell">Nada carregado ainda.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Ações rápidas</h2>
+                  <p>Sem rodeio</p>
+                </div>
+              </div>
+
+              <div class="quick-actions">
+                <button class="action-card" id="actionNovoCliente">
+                  <span class="action-icon">➕</span>
+                  <strong>Novo cliente</strong>
+                  <small>Cadastrar cliente novo</small>
+                </button>
+
+                <button class="action-card" id="actionNovaOS">
+                  <span class="action-icon">🧾</span>
+                  <strong>Nova OS</strong>
+                  <small>Criar ordem de serviço</small>
+                </button>
+
+                <button class="action-card" id="actionSync">
+                  <span class="action-icon">🔄</span>
+                  <strong>Atualizar dados</strong>
+                  <small>Recarregar sistema</small>
+                </button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- CLIENTES -->
+        <section class="view" id="view-clientes">
+          <div class="panel">
+            <div class="panel-head panel-head-wrap">
+              <div>
+                <h2>Clientes</h2>
+                <p>Cadastro e consulta</p>
+              </div>
+
+              <div class="toolbar">
+                <div class="search-box">
+                  <input
+                    type="text"
+                    id="clienteSearch"
+                    class="input"
+                    placeholder="Buscar cliente..."
+                  />
+                </div>
+                <button class="btn btn-primary" id="novoClienteBtn">+ Novo cliente</button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 120px;">ID</th>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>CNPJ</th>
+                    <th>Status</th>
+                    <th style="width: 180px;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="clientesTbody">
+                  <tr>
+                    <td colspan="6" class="empty-cell">Nenhum cliente carregado.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- LISTA DE OS -->
+        <section class="view" id="view-os-list">
+          <div class="panel">
+            <div class="panel-head panel-head-wrap">
+              <div>
+                <h2>Ordens de Serviço</h2>
+                <p>Listagem geral</p>
+              </div>
+
+              <div class="toolbar">
+                <div class="search-box">
+                  <input
+                    type="text"
+                    id="osSearch"
+                    class="input"
+                    placeholder="Buscar OS ou cliente..."
+                  />
+                </div>
+                <button class="btn btn-primary" id="novaOsBtn">+ Nova OS</button>
+              </div>
+            </div>
+
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 110px;">OS</th>
+                    <th>Cliente</th>
+                    <th style="width: 130px;">Data</th>
+                    <th style="width: 140px;">Status</th>
+                    <th style="width: 180px;">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="osTbody">
+                  <tr>
+                    <td colspan="5" class="empty-cell">Nenhuma OS carregada.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- DETALHE DA OS -->
+        <section class="view" id="view-os-detail">
+          <div class="detail-header">
+            <div>
+              <p class="detail-kicker">Ordem de Serviço</p>
+              <h2 class="detail-title" id="detailOsCodigo">OS #0001</h2>
+              <p class="detail-meta" id="detailOsMeta">Cliente — Data — Status</p>
+            </div>
+
+            <div class="detail-actions">
+              <button class="btn btn-secondary" id="voltarOsBtn">Voltar</button>
+              <button class="btn btn-secondary" id="statusOsBtn">Status</button>
+              <button class="btn btn-primary" id="gerarPdfBtn">Gerar PDF</button>
+            </div>
+          </div>
+
+          <div class="detail-grid">
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <h2>Dados da OS</h2>
+                  <p>Resumo principal</p>
+                </div>
+              </div>
+
+              <div class="info-list">
+                <div class="info-item">
+                  <span>Cliente</span>
+                  <strong id="detailClienteNome">—</strong>
+                </div>
+
+                <div class="info-item">
+                  <span>Status</span>
+                  <strong id="detailStatus" class="badge badge-neutral">—</strong>
+                </div>
+
+                <div class="info-item info-item-block">
+                  <span>Descrição</span>
+                  <strong id="detailDescricao">—</strong>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head panel-head-wrap">
+                <div>
+                  <h2>Itens / Serviços</h2>
+                  <p>Materiais e mão de obra</p>
+                </div>
+
+                <button class="btn btn-primary" id="novoItemBtn">+ Novo item</button>
+              </div>
+
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th style="width: 110px;">Tipo</th>
+                      <th>Descrição</th>
+                      <th style="width: 80px;">Qtd</th>
+                      <th style="width: 130px;">Preço</th>
+                      <th style="width: 130px;">Total</th>
+                      <th style="width: 170px;">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="itensTbody">
+                    <tr>
+                      <td colspan="6" class="empty-cell">Nenhum item carregado.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="detail-total">
+                <span>Total da OS</span>
+                <strong id="detailTotal">R$ 0,00</strong>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
     </div>
-  </header>
+  </div>
 
-  <main class="container">
-    <section>
-      <div class="h1">Escolha uma área</div>
-      <div class="small">Minimalista, rápido, sem credenciais no navegador.</div>
-    </section>
+  <div id="modalRoot"></div>
+  <div id="toastRoot"></div>
 
-    <section class="grid cols-2" style="margin-top:12px;">
-      <a class="tile" href="pedidos/">
-        <div class="icon">📦</div>
-        <div class="tile-body">
-          <div class="tile-title">Pedidos</div>
-          <div class="tile-sub">Visão geral e status</div>
-        </div>
-        <div class="chev">›</div>
-      </a>
+  <!-- placeholder do JS -->
+  <!-- depois criamos esse arquivo -->
+  <!-- <script src="assets/js/app.js" defer></script> -->
 
-      <a class="tile" href="cozinha/">
-        <div class="icon">🍳</div>
-        <div class="tile-body">
-          <div class="tile-title">Cozinha</div>
-          <div class="tile-sub">Itens, observações e tempo</div>
-        </div>
-        <div class="chev">›</div>
-      </a>
+  <script>
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+    const navLinks = document.querySelectorAll(".nav-link");
+    const views = document.querySelectorAll(".view");
+    const pageTitle = document.getElementById("pageTitle");
+    const pageSubtitle = document.getElementById("pageSubtitle");
 
-      <a class="tile" href="motoboy/">
-        <div class="icon">🛵</div>
-        <div class="tile-body">
-          <div class="tile-title">Entregas</div>
-          <div class="tile-sub">Endereço, rota e status</div>
-        </div>
-        <div class="chev">›</div>
-      </a>
+    const viewMap = {
+      dashboard: { title: "Início", subtitle: "Controle de clientes, OS e itens" },
+      clientes: { title: "Clientes", subtitle: "Cadastro e consulta" },
+      "os-list": { title: "Ordens de Serviço", subtitle: "Listagem geral" },
+      "os-detail": { title: "Detalhes da OS", subtitle: "Itens, status e PDF" }
+    };
 
-      <a class="tile" href="financeiro/">
-        <div class="icon">🔒</div>
-        <div class="tile-body">
-          <div class="tile-title">Financeiro</div>
-          <div class="tile-sub">Protegido por senha no backend</div>
-        </div>
-        <div class="chev">›</div>
-      </a>
-    </section>
+    menuToggle?.addEventListener("click", () => {
+      sidebar.classList.toggle("is-open");
+    });
 
-    <footer class="footer">
-      Frontend público e não confiável. Tokens e senhas ficam no Apps Script.
-    </footer>
-  </main>
+    navLinks.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const view = btn.dataset.view;
+        if (!view) return;
 
+        navLinks.forEach((item) => item.classList.remove("is-active"));
+        btn.classList.add("is-active");
+
+        views.forEach((section) => section.classList.remove("is-active"));
+        document.getElementById(`view-${view}`)?.classList.add("is-active");
+
+        pageTitle.textContent = viewMap[view]?.title || "Portal";
+        pageSubtitle.textContent = viewMap[view]?.subtitle || "";
+
+        sidebar.classList.remove("is-open");
+      });
+    });
+
+    document.getElementById("voltarOsBtn")?.addEventListener("click", () => {
+      document.querySelector('[data-view="os-list"]')?.click();
+    });
+  </script>
 </body>
 </html>

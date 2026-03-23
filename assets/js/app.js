@@ -7,36 +7,35 @@ const loginBtn = document.getElementById("loginBtn");
 const loginPassword = document.getElementById("loginPassword");
 const loginError = document.getElementById("loginError");
 
-function checkSession(){
+function checkSession() {
 
-  const token = sessionStorage.getItem("rm_token");
+    const token = sessionStorage.getItem("rm_token");
 
-  if(!token){
-    loginScreen.style.display="flex";
-  }else{
-    loginScreen.style.display="none";
-    loadDashboard();
-  }
+    if (!token) {
+        loginScreen.style.display = "flex";
+    } else {
+        loginScreen.style.display = "none";
+        loadDashboard();
+    }
 
 }
 
-loginBtn?.addEventListener("click", async ()=>{
+loginBtn?.addEventListener("click", async () => {
 
-  loginError.textContent="";
+    loginError.textContent = "";
 
-  try{
+    try {
 
-    await login(loginPassword.value);
+        await login(loginPassword.value);
 
-    loginScreen.style.display="none";
+        loginScreen.style.display = "none";
 
-    loadDashboard();
+        loadDashboard();
 
-  }catch(err){
-
-    loginError.textContent="Senha inválida";
-
-  }
+    } catch (err) {
+        console.error("Erro real no login:", err);
+        loginError.textContent = err.message || "Erro ao entrar";
+    }
 
 });
 
@@ -62,14 +61,14 @@ const modalRoot = document.getElementById("modalRoot");
 // MENU MOBILE
 // =============================
 
-function openMenu(){
-  sidebar.classList.add("is-open");
-  document.body.classList.add("menu-open");
+function openMenu() {
+    sidebar.classList.add("is-open");
+    document.body.classList.add("menu-open");
 }
 
-function closeMenu(){
-  sidebar.classList.remove("is-open");
-  document.body.classList.remove("menu-open");
+function closeMenu() {
+    sidebar.classList.remove("is-open");
+    document.body.classList.remove("menu-open");
 }
 
 menuToggle?.addEventListener("click", openMenu);
@@ -82,32 +81,32 @@ sidebarOverlay?.addEventListener("click", closeMenu);
 // =============================
 
 const viewMap = {
-  dashboard: { title:"Início", subtitle:"Controle de clientes, OS e itens" },
-  clientes: { title:"Clientes", subtitle:"Cadastro e consulta" },
-  "os-list": { title:"Ordens de Serviço", subtitle:"Listagem geral" },
-  "os-detail": { title:"Detalhes da OS", subtitle:"Itens e PDF" }
+    dashboard: { title: "Início", subtitle: "Controle de clientes, OS e itens" },
+    clientes: { title: "Clientes", subtitle: "Cadastro e consulta" },
+    "os-list": { title: "Ordens de Serviço", subtitle: "Listagem geral" },
+    "os-detail": { title: "Detalhes da OS", subtitle: "Itens e PDF" }
 };
 
-function goToView(view){
+function goToView(view) {
 
-  navLinks.forEach(link=>link.classList.remove("is-active"));
-  document.querySelector(`[data-view="${view}"]`)?.classList.add("is-active");
+    navLinks.forEach(link => link.classList.remove("is-active"));
+    document.querySelector(`[data-view="${view}"]`)?.classList.add("is-active");
 
-  views.forEach(v=>v.classList.remove("is-active"));
-  document.getElementById(`view-${view}`)?.classList.add("is-active");
+    views.forEach(v => v.classList.remove("is-active"));
+    document.getElementById(`view-${view}`)?.classList.add("is-active");
 
-  pageTitle.textContent = viewMap[view]?.title || "Portal";
-  pageSubtitle.textContent = viewMap[view]?.subtitle || "";
+    pageTitle.textContent = viewMap[view]?.title || "Portal";
+    pageSubtitle.textContent = viewMap[view]?.subtitle || "";
 
-  closeMenu();
+    closeMenu();
 }
 
-navLinks.forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    const view = btn.dataset.view;
-    if(!view) return;
-    goToView(view);
-  });
+navLinks.forEach(btn => {
+    btn.addEventListener("click", () => {
+        const view = btn.dataset.view;
+        if (!view) return;
+        goToView(view);
+    });
 });
 
 
@@ -115,9 +114,9 @@ navLinks.forEach(btn=>{
 // MODAL
 // =============================
 
-function showModal({title, body, actions=""}){
+function showModal({ title, body, actions = "" }) {
 
-  modalRoot.innerHTML = `
+    modalRoot.innerHTML = `
   <div class="modal-backdrop">
 
     <div class="modal-card">
@@ -140,26 +139,26 @@ function showModal({title, body, actions=""}){
   </div>
   `;
 
-  modalRoot.classList.add("has-modal");
-  document.body.classList.add("modal-open");
+    modalRoot.classList.add("has-modal");
+    document.body.classList.add("modal-open");
 }
 
-function closeModal(){
+function closeModal() {
 
-  modalRoot.innerHTML="";
-  modalRoot.classList.remove("has-modal");
-  document.body.classList.remove("modal-open");
+    modalRoot.innerHTML = "";
+    modalRoot.classList.remove("has-modal");
+    document.body.classList.remove("modal-open");
 }
 
-modalRoot.addEventListener("click",(e)=>{
+modalRoot.addEventListener("click", (e) => {
 
-  if(e.target.closest("[data-close-modal]")){
-    closeModal();
-  }
+    if (e.target.closest("[data-close-modal]")) {
+        closeModal();
+    }
 
-  if(e.target.classList.contains("modal-backdrop")){
-    closeModal();
-  }
+    if (e.target.classList.contains("modal-backdrop")) {
+        closeModal();
+    }
 
 });
 
@@ -168,13 +167,13 @@ modalRoot.addEventListener("click",(e)=>{
 // MODAL CLIENTE
 // =============================
 
-function openNovoClienteModal(){
+function openNovoClienteModal() {
 
-  showModal({
+    showModal({
 
-    title:"Novo Cliente",
+        title: "Novo Cliente",
 
-    body:`
+        body: `
       <div class="form-grid">
 
         <input class="input" placeholder="Nome do cliente">
@@ -191,11 +190,11 @@ function openNovoClienteModal(){
       </div>
     `,
 
-    actions:`
+        actions: `
       <button class="btn btn-secondary" data-close-modal="1">Cancelar</button>
       <button class="btn btn-primary">Salvar</button>
     `
-  });
+    });
 }
 
 
@@ -203,13 +202,13 @@ function openNovoClienteModal(){
 // MODAL OS
 // =============================
 
-function openNovaOSModal(){
+function openNovaOSModal() {
 
-  showModal({
+    showModal({
 
-    title:"Nova OS",
+        title: "Nova OS",
 
-    body:`
+        body: `
       <div class="form-grid">
 
         <select class="input">
@@ -221,11 +220,11 @@ function openNovaOSModal(){
       </div>
     `,
 
-    actions:`
+        actions: `
       <button class="btn btn-secondary" data-close-modal="1">Cancelar</button>
       <button class="btn btn-primary">Criar OS</button>
     `
-  });
+    });
 }
 
 
@@ -233,23 +232,23 @@ function openNovaOSModal(){
 // BOTÕES
 // =============================
 
-document.getElementById("actionNovoCliente")?.addEventListener("click",openNovoClienteModal);
-document.getElementById("novoClienteBtn")?.addEventListener("click",openNovoClienteModal);
+document.getElementById("actionNovoCliente")?.addEventListener("click", openNovoClienteModal);
+document.getElementById("novoClienteBtn")?.addEventListener("click", openNovoClienteModal);
 
-document.getElementById("actionNovaOS")?.addEventListener("click",openNovaOSModal);
-document.getElementById("novaOsBtn")?.addEventListener("click",openNovaOSModal);
-document.getElementById("quickNewOsBtn")?.addEventListener("click",openNovaOSModal);
+document.getElementById("actionNovaOS")?.addEventListener("click", openNovaOSModal);
+document.getElementById("novaOsBtn")?.addEventListener("click", openNovaOSModal);
+document.getElementById("quickNewOsBtn")?.addEventListener("click", openNovaOSModal);
 
 
 // =============================
 // ESC FECHA MODAL
 // =============================
 
-document.addEventListener("keydown",(e)=>{
-  if(e.key==="Escape"){
-    closeModal();
-    closeMenu();
-  }
+document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+        closeModal();
+        closeMenu();
+    }
 });
 
 

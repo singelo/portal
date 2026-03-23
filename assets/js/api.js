@@ -2,51 +2,62 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbz5U38Rr5SplH74c8Jg9A4H
 
 async function apiRequest(action, payload = {}, auth = true) {
 
-  const token = sessionStorage.getItem("rm_token");
+    const token = sessionStorage.getItem("rm_token");
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action,
-      token: auth ? token : "",
-      payload
-    })
-  });
+    const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            action,
+            token: auth ? token : "",
+            payload
+        })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!data.ok) {
-    throw new Error(data.error || "Erro na API");
-  }
+    if (!data.ok) {
+        throw new Error(data.error || "Erro na API");
+    }
 
-  return data.data;
+    return data.data;
 }
 
-async function login(password){
+async function login(password) {
+    const body = new URLSearchParams();
+    body.append("action", "login");
+    body.append("password", password);
 
-  const body = new URLSearchParams();
-  body.append("action","login");
-  body.append("password",password);
+    console.log("POST login para:", API_URL);
+    console.log("Payload:", body.toString());
 
-  const res = await fetch(API_URL,{
-    method:"POST",
-    body
-  });
+    const res = await fetch(API_URL, {
+        method: "POST",
+        body
+    });
 
-  const data = await res.json();
+    console.log("Status HTTP:", res.status);
 
-  if(!data.ok){
-    throw new Error(data.error);
-  }
+    const text = await res.text();
+    console.log("Resposta bruta da API:", text);
 
-  sessionStorage.setItem("rm_token",data.data.token);
+    let data;
+    try {
+        data = JSON.parse(text);
+    } catch (e) {
+        throw new Error("Resposta não é JSON válido: " + text);
+    }
 
-  return true;
+    if (!data.ok) {
+        throw new Error(data.error || "Erro na API");
+    }
+
+    sessionStorage.setItem("rm_token", data.data.token);
+    return true;
 }
 
 function logout() {
-  sessionStorage.removeItem("rm_token");
+    sessionStorage.removeItem("rm_token");
 }

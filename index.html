@@ -1,342 +1,155 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RM Manutenções</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <title>RM Portal</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css" rel="stylesheet"/>
 </head>
-
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-head">
-        <div class="brand">
-          <img src="assets/img/logo-rm.png" alt="RM Manutenções" class="brand-logo" />
-          <div class="brand-text">
-            <strong>RM Manutenções</strong>
-            <span>Portal operacional</span>
-          </div>
+  <div class="page">
+    <aside class="navbar navbar-vertical navbar-expand-lg navbar-dark">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <h1 class="navbar-brand navbar-brand-autodark">
+          RM Portal
+        </h1>
+
+        <div class="collapse navbar-collapse show" id="sidebar-menu">
+          <ul class="navbar-nav pt-lg-3">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">
+                <span class="nav-link-title">Dashboard</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="nav-link-title">Clientes</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="nav-link-title">Ordens de Serviço</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <span class="nav-link-title">Propostas</span>
+              </a>
+            </li>
+          </ul>
         </div>
-
-        <button class="icon-btn sidebar-close mobile-only" id="closeSidebarBtn" aria-label="Fechar menu">
-          ✕
-        </button>
       </div>
-
-      <nav class="nav">
-        <button class="nav-link is-active" data-view="dashboard">
-          <span>🏠</span>
-          <span>Início</span>
-        </button>
-
-        <button class="nav-link" data-view="clientes">
-          <span>👥</span>
-          <span>Clientes</span>
-        </button>
-
-        <button class="nav-link" data-view="os-list">
-          <span>🧾</span>
-          <span>Ordens de Serviço</span>
-        </button>
-      </nav>
     </aside>
 
-    <div class="app-main">
-      <header class="topbar">
-        <div class="topbar-left">
-          <button class="icon-btn mobile-only" id="menuToggle" aria-label="Abrir menu">
-            ☰
-          </button>
-          <div>
-            <h1 class="page-title" id="pageTitle">Início</h1>
-            <p class="page-subtitle" id="pageSubtitle">
-              Controle de clientes, OS e itens
-            </p>
+    <div class="page-wrapper">
+      <div class="page-header d-print-none">
+        <div class="container-xl">
+          <div class="row g-2 align-items-center">
+            <div class="col">
+              <h2 class="page-title">Dashboard</h2>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="topbar-right">
-          <button class="btn btn-secondary" id="syncBtn">Atualizar</button>
-          <button class="btn btn-primary" id="quickNewOsBtn">+ Nova OS</button>
+      <div class="page-body">
+        <div class="container-xl">
+          <div class="row row-deck row-cards">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  Bem-vindo ao sistema RM
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="h1 m-0">128</div>
+                  <div class="text-secondary">Clientes</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="h1 m-0">24</div>
+                  <div class="text-secondary">OS abertas</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="h1 m-0">9</div>
+                  <div class="text-secondary">Propostas</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="h1 m-0">6</div>
+                  <div class="text-secondary">Concluídas hoje</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h3 class="card-title">Últimas ordens de serviço</h3>
+                </div>
+                <div class="table-responsive">
+                  <table class="table card-table table-vcenter text-nowrap">
+                    <thead>
+                      <tr>
+                        <th>Número</th>
+                        <th>Cliente</th>
+                        <th>Status</th>
+                        <th>Data</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>#0001</td>
+                        <td>Posto Exemplo</td>
+                        <td><span class="badge bg-warning-lt">Em andamento</span></td>
+                        <td>21/04/2026</td>
+                      </tr>
+                      <tr>
+                        <td>#0002</td>
+                        <td>Cliente Teste</td>
+                        <td><span class="badge bg-green-lt">Concluída</span></td>
+                        <td>21/04/2026</td>
+                      </tr>
+                      <tr>
+                        <td>#0003</td>
+                        <td>Empresa X</td>
+                        <td><span class="badge bg-red-lt">Pendente</span></td>
+                        <td>20/04/2026</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
-      </header>
-
-      <main class="content">
-        <!-- DASHBOARD -->
-        <section class="view is-active" id="view-dashboard">
-          <div class="stats-grid">
-            <article class="stat-card">
-              <span class="stat-label">Clientes ativos</span>
-              <strong class="stat-value" id="statClientes">0</strong>
-            </article>
-
-            <article class="stat-card">
-              <span class="stat-label">OS abertas</span>
-              <strong class="stat-value" id="statOSAbertas">0</strong>
-            </article>
-
-            <article class="stat-card">
-              <span class="stat-label">OS canceladas</span>
-              <strong class="stat-value" id="statOSCanceladas">0</strong>
-            </article>
-
-            <article class="stat-card">
-              <span class="stat-label">Total em OS</span>
-              <strong class="stat-value" id="statValorTotal">R$ 0,00</strong>
-            </article>
-          </div>
-
-          <div class="content-grid">
-            <section class="panel">
-              <div class="panel-head">
-                <div>
-                  <h2>Últimas ordens</h2>
-                  <p>Resumo rápido do que está rolando</p>
-                </div>
-              </div>
-
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th>OS</th>
-                      <th>Cliente</th>
-                      <th>Status</th>
-                      <th>Data</th>
-                    </tr>
-                  </thead>
-                  <tbody id="dashboardOsTbody">
-                    <tr>
-                      <td colspan="4" class="empty-cell">Nada carregado ainda.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            <section class="panel">
-              <div class="panel-head">
-                <div>
-                  <h2>Ações rápidas</h2>
-                  <p>Sem rodeio</p>
-                </div>
-              </div>
-
-              <div class="quick-actions">
-                <button class="action-card" id="actionNovoCliente">
-                  <span class="action-icon">➕</span>
-                  <strong>Novo cliente</strong>
-                  <small>Cadastrar cliente novo</small>
-                </button>
-
-                <button class="action-card" id="actionNovaOS">
-                  <span class="action-icon">🧾</span>
-                  <strong>Nova OS</strong>
-                  <small>Criar ordem de serviço</small>
-                </button>
-
-                <button class="action-card" id="actionSync">
-                  <span class="action-icon">🔄</span>
-                  <strong>Atualizar dados</strong>
-                  <small>Recarregar sistema</small>
-                </button>
-              </div>
-            </section>
-          </div>
-        </section>
-
-        <!-- CLIENTES -->
-        <section class="view" id="view-clientes">
-          <div class="panel">
-            <div class="panel-head panel-head-wrap">
-              <div>
-                <h2>Clientes</h2>
-                <p>Cadastro e consulta</p>
-              </div>
-
-              <div class="toolbar">
-                <div class="search-box">
-                  <input type="text" id="clienteSearch" class="input" placeholder="Buscar cliente..." />
-                </div>
-                <button class="btn btn-primary" id="novoClienteBtn">+ Novo cliente</button>
-              </div>
-            </div>
-
-            <div class="table-wrap">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 120px;">ID</th>
-                    <th>Nome</th>
-                    <th>Telefone</th>
-                    <th>CNPJ</th>
-                    <th>Status</th>
-                    <th style="width: 180px;">Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="clientesTbody">
-                  <tr>
-                    <td colspan="6" class="empty-cell">Nenhum cliente carregado.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- LISTA DE OS -->
-        <section class="view" id="view-os-list">
-          <div class="panel">
-            <div class="panel-head panel-head-wrap">
-              <div>
-                <h2>Ordens de Serviço</h2>
-                <p>Listagem geral</p>
-              </div>
-
-              <div class="toolbar">
-                <div class="search-box">
-                  <input type="text" id="osSearch" class="input" placeholder="Buscar OS ou cliente..." />
-                </div>
-                <button class="btn btn-primary" id="novaOsBtn">+ Nova OS</button>
-              </div>
-            </div>
-
-            <div class="table-wrap">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th style="width: 110px;">OS</th>
-                    <th>Cliente</th>
-                    <th style="width: 130px;">Data</th>
-                    <th style="width: 140px;">Status</th>
-                    <th style="width: 180px;">Ações</th>
-                  </tr>
-                </thead>
-                <tbody id="osTbody">
-                  <tr>
-                    <td colspan="5" class="empty-cell">Nenhuma OS carregada.</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <!-- DETALHE DA OS -->
-        <section class="view" id="view-os-detail">
-          <div class="detail-header">
-            <div>
-              <p class="detail-kicker">Ordem de Serviço</p>
-              <h2 class="detail-title" id="detailOsCodigo">OS #0001</h2>
-              <p class="detail-meta" id="detailOsMeta">Cliente — Data — Status</p>
-            </div>
-
-            <div class="detail-actions">
-              <button class="btn btn-secondary" id="voltarOsBtn">Voltar</button>
-              <button class="btn btn-secondary" id="statusOsBtn">Status</button>
-              <button class="btn btn-primary" id="gerarPdfBtn">Gerar PDF</button>
-            </div>
-          </div>
-
-          <div class="detail-grid">
-            <section class="panel">
-              <div class="panel-head">
-                <div>
-                  <h2>Dados da OS</h2>
-                  <p>Resumo principal</p>
-                </div>
-              </div>
-
-              <div class="info-list">
-                <div class="info-item">
-                  <span>Cliente</span>
-                  <strong id="detailClienteNome">—</strong>
-                </div>
-
-                <div class="info-item">
-                  <span>Status</span>
-                  <strong id="detailStatus" class="badge badge-neutral">—</strong>
-                </div>
-
-                <div class="info-item info-item-block">
-                  <span>Descrição</span>
-                  <strong id="detailDescricao">—</strong>
-                </div>
-              </div>
-            </section>
-
-            <section class="panel">
-              <div class="panel-head panel-head-wrap">
-                <div>
-                  <h2>Itens / Serviços</h2>
-                  <p>Materiais e mão de obra</p>
-                </div>
-
-                <button class="btn btn-primary" id="novoItemBtn">+ Novo item</button>
-              </div>
-
-              <div class="table-wrap">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th style="width: 110px;">Tipo</th>
-                      <th>Descrição</th>
-                      <th style="width: 80px;">Qtd</th>
-                      <th style="width: 130px;">Preço</th>
-                      <th style="width: 130px;">Total</th>
-                      <th style="width: 170px;">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody id="itensTbody">
-                    <tr>
-                      <td colspan="6" class="empty-cell">Nenhum item carregado.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div class="detail-total">
-                <span>Total da OS</span>
-                <strong id="detailTotal">R$ 0,00</strong>
-              </div>
-            </section>
-          </div>
-        </section>
-      </main>
+      </div>
     </div>
   </div>
 
-  <div id="modalRoot"></div>
-  <div id="toastRoot"></div>
-  <div id="loginScreen" class="login-screen">
-
-    <div class="login-card">
-
-      <img src="assets/img/logo-rm.png" class="login-logo">
-
-      <h2>RM Manutenções</h2>
-
-      <input type="password" id="loginPassword" class="input" placeholder="Digite a senha">
-
-      <button id="loginBtn" class="btn btn-primary">
-        Entrar
-      </button>
-
-      <p id="loginError" class="login-error"></p>
-
-    </div>
-
-  </div>
-  <!-- placeholder do JS -->
-  <script src="assets/js/api.js"></script>
-  <script src="assets/js/app.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js"></script>
 </body>
-
 </html>

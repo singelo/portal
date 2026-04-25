@@ -1,6 +1,14 @@
 /*
 Adicionar estes casos dentro de handleRequest_(e, method), no switch(action):
 
+case 'clientes.update':
+  requireSession_(params.token);
+  return ok_(updateCliente_(params.payload));
+
+case 'clientes.delete':
+  requireSession_(params.token);
+  return ok_(deleteCliente_(params.payload));
+
 case 'os.list':
   requireSession_(params.token);
   return ok_(listOrdensServico_());
@@ -12,6 +20,14 @@ case 'os.details':
 case 'os.create':
   requireSession_(params.token);
   return ok_(createOrdemServico_(params.payload));
+
+case 'os.update':
+  requireSession_(params.token);
+  return ok_(updateOrdemServico_(params.payload));
+
+case 'os.delete':
+  requireSession_(params.token);
+  return ok_(deleteOrdemServico_(params.payload));
 
 case 'os.status.update':
   requireSession_(params.token);
@@ -40,4 +56,16 @@ case 'propostas.generate':
 case 'propostas.list':
   requireSession_(params.token);
   return ok_(listProposalFiles_());
+
+case 'estoque.list':
+  requireSession_(params.token);
+  return ok_(listEstoque_());
+
+case 'estoque.create':
+  requireSession_(params.token);
+  return ok_(createEstoqueItem_(params.payload));
+
+case 'estoque.delete':
+  requireSession_(params.token);
+  return ok_(deleteEstoqueItem_(params.payload));
 */

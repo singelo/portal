@@ -3,6 +3,7 @@ Adicionar ou ajustar no seu Config.gs:
 
 CONFIG.SHEETS.OS = 'OS';
 CONFIG.SHEETS.ITENS_OS = 'ItensOS';
+CONFIG.SHEETS.ESTOQUE = 'Estoque';
 
 CONFIG.PROP_KEYS.PDF_FOLDER_ID = 'PDF_FOLDER_ID';
 CONFIG.PROP_KEYS.PDF_LOGO_FILE_ID = 'PDF_LOGO_FILE_ID';
@@ -33,4 +34,14 @@ ItensOS
 - quantidade
 - preco_unit
 - total
+
+Estoque
+- id_item_estoque
+- nome
+- categoria
+- unidade
+- quantidade_atual
+- custo_unitario
+- localizacao
+- status
 */

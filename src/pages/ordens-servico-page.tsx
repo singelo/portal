@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { FileText, PlusCircle, RefreshCw, Search } from 'lucide-react';
+import { FileText, Pencil, PlusCircle, RefreshCw, Search, Trash2 } from 'lucide-react';
 import { SectionHeading } from '../components/section-heading';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -9,14 +9,15 @@ import { Input } from '../components/ui/input';
 import { Table, TableWrapper, TBodyCell, THeadCell } from '../components/ui/table';
 import { formatCurrency } from '../lib/format';
 import { OrdemServicoItemModal, OrdemServicoModal, OrdemServicoStatusModal, PropostaModal } from '../features/operacao/action-modals';
-import { deleteOrdemServicoItem, generateOrdemServicoPdf } from '../services/mutations';
+import { deleteOrdemServico, deleteOrdemServicoItem, generateOrdemServicoPdf } from '../services/mutations';
 import { fetchOrdemServicoDetails, fetchOrdensServico, queryKeys } from '../services/queries';
-import type { OrdemServicoItem } from '../types/api';
+import type { OrdemServico, OrdemServicoItem } from '../types/api';
 
 export function OrdensServicoPage() {
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [propostaOpen, setPropostaOpen] = useState(false);
+  const [editingOs, setEditingOs] = useState<OrdemServico | null>(null);
   const [itemModalOpen, setItemModalOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<OrdemServicoItem | null>(null);
@@ -63,6 +64,18 @@ export function OrdensServicoPage() {
     mutationFn: generateOrdemServicoPdf,
     onSuccess: (url) => {
       window.open(url, '_blank', 'noopener,noreferrer');
+    },
+  });
+
+  const deleteOsMutation = useMutation({
+    mutationFn: deleteOrdemServico,
+    onSuccess: async (_, deletedOsId) => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.ordensServico }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.dashboardSummary }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.ordemServicoDetails(deletedOsId) }),
+      ]);
+      setSelectedOsId(null);
     },
   });
 
@@ -315,6 +328,17 @@ export function OrdensServicoPage() {
                   </Button>
                   <Button
                     className="w-full"
+                    variant="outline"
+                    onClick={() => {
+                      setEditingOs(selectedOs);
+                      setCreateOpen(true);
+                    }}
+                  >
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Editar
+                  </Button>
+                  <Button
+                    className="w-full"
                     variant="secondary"
                     disabled={generatePdfMutation.isPending}
                     onClick={() => {
@@ -323,6 +347,18 @@ export function OrdensServicoPage() {
                   >
                     <FileText className="mr-2 h-4 w-4" />
                     {generatePdfMutation.isPending ? 'Gerando PDF...' : 'PDF'}
+                  </Button>
+                  <Button
+                    className="w-full"
+                    variant="danger"
+                    disabled={deleteOsMutation.isPending}
+                    onClick={() => {
+                      if (!window.confirm(`Excluir a OS ${formatOsCode(selectedOs.id)} e todos os itens dela?`)) return;
+                      void deleteOsMutation.mutateAsync(selectedOs.id);
+                    }}
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    {deleteOsMutation.isPending ? 'Excluindo...' : 'Excluir'}
                   </Button>
                   <Button
                     className="w-full"
@@ -351,6 +387,7 @@ export function OrdensServicoPage() {
               {detailsQuery.isError ? <InlineError message={(detailsQuery.error as Error).message} /> : null}
               {deleteItemMutation.error ? <InlineError message={(deleteItemMutation.error as Error).message} /> : null}
               {generatePdfMutation.error ? <InlineError message={(generatePdfMutation.error as Error).message} /> : null}
+              {deleteOsMutation.error ? <InlineError message={(deleteOsMutation.error as Error).message} /> : null}
 
               <div className="mt-6 space-y-3 md:hidden">
                 {detailsQuery.isLoading ? (
@@ -491,7 +528,14 @@ export function OrdensServicoPage() {
         </Card>
       </div>
 
-      <OrdemServicoModal open={createOpen} onClose={() => setCreateOpen(false)} />
+      <OrdemServicoModal
+        open={createOpen}
+        ordem={editingOs}
+        onClose={() => {
+          setCreateOpen(false);
+          setEditingOs(null);
+        }}
+      />
       <PropostaModal open={propostaOpen} onClose={() => setPropostaOpen(false)} />
 
       {selectedOsId ? (

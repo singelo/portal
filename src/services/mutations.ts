@@ -8,6 +8,8 @@ import type {
   OrdemServicoItemInput,
   PdfPayload,
   PropostaInput,
+  StockItem,
+  StockItemInput,
 } from '../types/api';
 
 export async function createCliente(payload: ClienteInput): Promise<Cliente> {
@@ -19,6 +21,22 @@ export async function createCliente(payload: ClienteInput): Promise<Cliente> {
   return normalizeCliente(result.data);
 }
 
+export async function updateCliente(clienteId: string | number, payload: ClienteInput): Promise<Cliente> {
+  const result = await apiRequest('clientes.update', { payload: { clienteId, ...payload } });
+  if (!result.ok) {
+    throw new Error(result.error?.message || 'Erro ao atualizar cliente.');
+  }
+
+  return normalizeCliente(result.data);
+}
+
+export async function deleteCliente(clienteId: string | number): Promise<void> {
+  const result = await apiRequest('clientes.delete', { payload: { clienteId } });
+  if (!result.ok) {
+    throw new Error(result.error?.message || 'Erro ao excluir cliente.');
+  }
+}
+
 export async function createOrdemServico(payload: OrdemServicoInput): Promise<OrdemServico> {
   const result = await apiRequest('os.create', { payload });
   if (!result.ok) {
@@ -26,6 +44,22 @@ export async function createOrdemServico(payload: OrdemServicoInput): Promise<Or
   }
 
   return result.data;
+}
+
+export async function updateOrdemServico(osId: string, payload: OrdemServicoInput): Promise<OrdemServico> {
+  const result = await apiRequest('os.update', { payload: { osId, ...payload } });
+  if (!result.ok) {
+    throw new Error(result.error?.message || 'Erro ao atualizar ordem de servico.');
+  }
+
+  return result.data;
+}
+
+export async function deleteOrdemServico(osId: string): Promise<void> {
+  const result = await apiRequest('os.delete', { payload: { osId } });
+  if (!result.ok) {
+    throw new Error(result.error?.message || 'Erro ao excluir ordem de servico.');
+  }
 }
 
 export async function updateOrdemServicoStatus(osId: string, status: string): Promise<OrdemServico> {
@@ -83,6 +117,22 @@ export async function generatePropostaPdf(payload: PropostaInput): Promise<strin
   return normalizePdfUrl(result.data);
 }
 
+export async function createStockItem(payload: StockItemInput): Promise<StockItem> {
+  const result = await apiRequest('estoque.create', { payload });
+  if (!result.ok) {
+    throw new Error(result.error?.message || 'Erro ao cadastrar item de estoque.');
+  }
+
+  return normalizeStockItem(result.data);
+}
+
+export async function deleteStockItem(itemId: string): Promise<void> {
+  const result = await apiRequest('estoque.delete', { payload: { itemId } });
+  if (!result.ok) {
+    throw new Error(result.error?.message || 'Erro ao excluir item de estoque.');
+  }
+}
+
 function normalizePdfUrl(payload: PdfPayload | string) {
   if (typeof payload === 'string') {
     return payload;
@@ -107,5 +157,20 @@ function normalizeCliente(cliente: Cliente) {
     observacoes: cliente.observacoes ?? String(source.obs ?? source.observacoes ?? ''),
     cnpj: cliente.cnpj ?? String(source.cnpj ?? ''),
     status: cliente.status ?? String(source.status ?? ''),
+  };
+}
+
+function normalizeStockItem(item: StockItem) {
+  const source = item as StockItem & Record<string, unknown>;
+
+  return {
+    id: String(item.id ?? source.id_item_estoque ?? ''),
+    nome: String(item.nome ?? source.nome ?? ''),
+    categoria: String(item.categoria ?? source.categoria ?? ''),
+    unidade: String(item.unidade ?? source.unidade ?? 'un'),
+    quantidadeAtual: Number(item.quantidadeAtual ?? source.quantidade_atual ?? 0),
+    custoUnitario: Number(item.custoUnitario ?? source.custo_unitario ?? 0),
+    localizacao: String(item.localizacao ?? source.localizacao ?? ''),
+    status: String(item.status ?? source.status ?? ''),
   };
 }

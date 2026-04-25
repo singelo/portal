@@ -9,6 +9,7 @@ Arquivos prontos para copiar para o seu projeto do Google Apps Script.
 - `OsService.gs`
 - `PdfService.gs`
 - `PropostaService.gs`
+- `EstoqueService.gs`
 
 ## O que ajustar no projeto atual
 
@@ -52,6 +53,31 @@ Arquivos prontos para copiar para o seu projeto do Google Apps Script.
 - `quantidade`
 - `preco_unit`
 - `total`
+
+### Estoque
+
+- `id_item_estoque`
+- `nome`
+- `categoria`
+- `unidade`
+- `quantidade_atual`
+- `custo_unitario`
+- `localizacao`
+- `status`
+
+## Estrategia para estoque
+
+Modelo simples e profissional para comecar:
+
+1. cadastro livre de item no estoque
+2. item pode ser usado manualmente na OS
+3. depois voce decide se quer debitar estoque automaticamente ao lancar item da OS
+
+Minha recomendacao agora:
+
+- fase 1: so listar e cadastrar estoque
+- fase 2: permitir puxar item do estoque para OS
+- fase 3: controlar baixa automatica e alertas de reposicao
 
 ## IDs em formato curto
 

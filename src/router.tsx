@@ -4,6 +4,7 @@ import { useAuth } from './stores/auth-store';
 import { LoginPage } from './pages/login-page';
 import { DashboardPage } from './pages/dashboard-page';
 import { ClientesPage } from './pages/clientes-page';
+import { EstoquePage } from './pages/estoque-page';
 import { OrdensServicoPage } from './pages/ordens-servico-page';
 import { PropostasPage } from './pages/propostas-page';
 import { NotFoundPage } from './pages/not-found-page';
@@ -48,6 +49,10 @@ export const router = createHashRouter([
       {
         path: 'clientes',
         element: <ClientesPage />,
+      },
+      {
+        path: 'estoque',
+        element: <EstoquePage />,
       },
       {
         path: 'ordens-servico',

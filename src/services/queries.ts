@@ -1,9 +1,10 @@
 import { apiRequest } from './api';
-import type { Cliente, DashboardSummary, OrdemServico, OrdemServicoDetails, ProposalFile } from '../types/api';
+import type { Cliente, DashboardSummary, OrdemServico, OrdemServicoDetails, ProposalFile, StockItem } from '../types/api';
 
 export const queryKeys = {
   dashboardSummary: ['dashboard-summary'] as const,
   clientes: ['clientes'] as const,
+  estoque: ['estoque'] as const,
   propostas: ['propostas'] as const,
   ordensServico: ['ordens-servico'] as const,
   ordemServicoDetails: (osId: string) => ['ordens-servico', osId] as const,
@@ -36,6 +37,15 @@ export async function fetchProposalFiles(): Promise<ProposalFile[]> {
   return (result.data ?? []).map(normalizeProposalFile);
 }
 
+export async function fetchStockItems(): Promise<StockItem[]> {
+  const result = await apiRequest('estoque.list');
+  if (!result.ok) {
+    throw new Error(result.error?.message || 'Erro ao carregar estoque.');
+  }
+
+  return (result.data ?? []).map(normalizeStockItem);
+}
+
 export async function fetchOrdensServico(): Promise<OrdemServico[]> {
   const result = await apiRequest('os.list');
   if (!result.ok) {
@@ -56,6 +66,7 @@ export async function fetchOrdemServicoDetails(osId: string): Promise<OrdemServi
     itens: (result.data.itens ?? []).map((item) => ({
       id: item.id ?? (item as Record<string, unknown>).id_item ?? '',
       osId: String(item.osId ?? (item as Record<string, unknown>).os_id ?? ''),
+      estoqueItemId: String(item.estoqueItemId ?? (item as Record<string, unknown>).estoque_item_id ?? ''),
       tipo: String(item.tipo ?? ''),
       descricao: String(item.descricao ?? ''),
       quantidade: Number(item.quantidade ?? 0),
@@ -106,5 +117,20 @@ function normalizeProposalFile(file: ProposalFile) {
     createdAt: String(file.createdAt ?? source.createdAt ?? source.dataCriacao ?? ''),
     updatedAt: String(file.updatedAt ?? source.updatedAt ?? source.dataAtualizacao ?? ''),
     sizeBytes: Number(file.sizeBytes ?? source.sizeBytes ?? source.tamanho ?? 0),
+  };
+}
+
+function normalizeStockItem(item: StockItem) {
+  const source = item as StockItem & Record<string, unknown>;
+
+  return {
+    id: String(item.id ?? source.id_item_estoque ?? ''),
+    nome: String(item.nome ?? source.nome ?? ''),
+    categoria: String(item.categoria ?? source.categoria ?? ''),
+    unidade: String(item.unidade ?? source.unidade ?? 'un'),
+    quantidadeAtual: Number(item.quantidadeAtual ?? source.quantidade_atual ?? 0),
+    custoUnitario: Number(item.custoUnitario ?? source.custo_unitario ?? 0),
+    localizacao: String(item.localizacao ?? source.localizacao ?? ''),
+    status: String(item.status ?? source.status ?? ''),
   };
 }

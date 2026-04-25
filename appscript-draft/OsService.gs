@@ -125,6 +125,61 @@ function createOrdemServico_(payload) {
   return getOrdemServicoDetails_(id).os;
 }
 
+function updateOrdemServico_(payload) {
+  if (!payload || !payload.osId) {
+    throw new Error('OS obrigatoria.');
+  }
+
+  if (!payload.clienteId) {
+    throw new Error('Cliente obrigatorio.');
+  }
+
+  if (!payload.descricao) {
+    throw new Error('Descricao obrigatoria.');
+  }
+
+  const current = getRowsObject_(CONFIG.SHEETS.OS).find(function (item) {
+    return String(item.id_os || '') === String(payload.osId);
+  });
+
+  if (!current) {
+    throw new Error('OS nao encontrada.');
+  }
+
+  const updated = {
+    id_os: String(current.id_os || ''),
+    data: String(current.data || ''),
+    cliente_id: String(payload.clienteId || '').trim(),
+    status: String(current.status || 'Aberto'),
+    descricao: String(payload.descricao || '').trim(),
+  };
+
+  updateObjectById_(CONFIG.SHEETS.OS, payload.osId, 'id_os', updated);
+  clearOsCaches_();
+
+  return getOrdemServicoDetails_(payload.osId).os;
+}
+
+function deleteOrdemServico_(payload) {
+  if (!payload || !payload.osId) {
+    throw new Error('OS obrigatoria.');
+  }
+
+  const osId = String(payload.osId || '').trim();
+  const itens = getRowsObject_(CONFIG.SHEETS.ITENS_OS).filter(function (item) {
+    return String(item.os_id || '') === osId;
+  });
+
+  itens.forEach(function (item) {
+    deleteRowById_(CONFIG.SHEETS.ITENS_OS, item.id_item, 'id_item');
+  });
+
+  deleteRowById_(CONFIG.SHEETS.OS, osId, 'id_os');
+  clearOsCaches_();
+
+  return { success: true };
+}
+
 function updateOrdemServicoStatus_(payload) {
   if (!payload || !payload.osId) {
     throw new Error('OS obrigatoria.');
@@ -160,6 +215,7 @@ function createOsItem_(payload) {
   const item = {
     id_item: getNextSequenceId_(CONFIG.SHEETS.ITENS_OS, 'id_item', 'SEQ_ITEM_OS', 4),
     os_id: String(payload.osId).trim(),
+    estoque_item_id: String(payload.estoqueItemId || '').trim(),
     tipo: String(payload.tipo).trim(),
     descricao: String(payload.descricao).trim(),
     quantidade: quantidade,
@@ -194,6 +250,7 @@ function updateOsItem_(payload) {
   const updated = {
     id_item: String(current.id_item),
     os_id: String(payload.osId).trim(),
+    estoque_item_id: String(payload.estoqueItemId || current.estoque_item_id || '').trim(),
     tipo: String(payload.tipo).trim(),
     descricao: String(payload.descricao).trim(),
     quantidade: quantidade,
@@ -221,7 +278,7 @@ function deleteOsItem_(payload) {
 function clearOsCaches_() {
   const cache = CacheService.getScriptCache();
   cache.remove('os:list:v1');
-  cache.remove('dashboard:summary:v1');
+  cache.remove('dashboard:summary:v2');
 }
 
 function validateOsItemPayload_(payload) {
@@ -242,6 +299,7 @@ function normalizeOsItem_(item) {
   return {
     id: normalizeSequenceText_(item.id_item),
     osId: String(item.os_id || ''),
+    estoqueItemId: normalizeSequenceText_(item.estoque_item_id),
     tipo: String(item.tipo || ''),
     descricao: String(item.descricao || ''),
     quantidade: parseBrNumber_(item.quantidade),
@@ -263,11 +321,4 @@ function parseBrNumber_(value) {
 
   const parsed = Number(normalized);
   return isNaN(parsed) ? 0 : parsed;
-}
-
-function normalizeSequenceText_(value) {
-  const digits = String(value || '').replace(/\D/g, '');
-  if (!digits) return '';
-
-  return padNumber_(Number(digits), 4);
 }

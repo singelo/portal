@@ -37,7 +37,9 @@ function updateObjectById_(sheetName, id, idColumnName, obj) {
     return obj[header] !== undefined ? obj[header] : '';
   });
 
-  sheet.getRange(rowIndex, 1, 1, row.length).setValues([row]);
+  const range = sheet.getRange(rowIndex, 1, 1, row.length);
+  range.setValues([row]);
+  applyPlainTextToIdCells_(sheet, rowIndex, headers);
   return obj;
 }
 
@@ -126,4 +128,34 @@ function getMaxNumericIdFromSheet_(sheetName, idColumnName) {
 
 function padNumber_(value, length) {
   return String(value).padStart(length || 4, '0');
+}
+
+function normalizeSequenceText_(value, length) {
+  const digits = String(value || '').replace(/\D/g, '');
+  if (!digits) return '';
+
+  return padNumber_(Number(digits), length || 4);
+}
+
+function appendObject_(sheetName, obj) {
+  const sheet = getSheet_(sheetName);
+  const headers = getHeaders_(sheet);
+
+  const row = headers.map(function (header) {
+    return obj[header] !== undefined ? obj[header] : '';
+  });
+
+  const nextRow = sheet.getLastRow() + 1;
+  const range = sheet.getRange(nextRow, 1, 1, row.length);
+  range.setValues([row]);
+  applyPlainTextToIdCells_(sheet, nextRow, headers);
+}
+
+function applyPlainTextToIdCells_(sheet, rowIndex, headers) {
+  headers.forEach(function (header, index) {
+    const normalized = String(header || '').trim().toLowerCase();
+    if (normalized === 'id' || normalized.indexOf('id_') === 0 || normalized.endsWith('_id')) {
+      sheet.getRange(rowIndex, index + 1).setNumberFormat('@');
+    }
+  });
 }

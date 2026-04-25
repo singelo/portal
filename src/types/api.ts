@@ -27,10 +27,7 @@ export type SessionPayload = {
 export type DashboardSummary = {
   clientes?: number;
   osAbertas?: number;
-  propostasPendentes?: number;
-  status?: string;
-  faturamentoMes?: number;
-  agendaHoje?: number;
+  faturamentoGeral?: number;
 };
 
 export type Cliente = {
@@ -82,6 +79,7 @@ export type OrdemServicoItemTipo = 'Produto' | 'Servico';
 export type OrdemServicoItem = {
   id: string | number;
   osId: string;
+  estoqueItemId?: string;
   tipo: OrdemServicoItemTipo | string;
   descricao: string;
   quantidade: number;
@@ -91,6 +89,7 @@ export type OrdemServicoItem = {
 
 export type OrdemServicoItemInput = {
   osId: string;
+  estoqueItemId?: string;
   tipo: OrdemServicoItemTipo;
   descricao: string;
   quantidade: number;
@@ -119,4 +118,25 @@ export type ProposalFile = {
   createdAt?: string;
   updatedAt?: string;
   sizeBytes?: number;
+};
+
+export type StockItem = {
+  id: string;
+  nome: string;
+  categoria?: string;
+  unidade?: string;
+  quantidadeAtual: number;
+  custoUnitario?: number;
+  localizacao?: string;
+  status?: string;
+};
+
+export type StockItemInput = {
+  nome: string;
+  categoria?: string;
+  unidade?: string;
+  quantidade: number;
+  custoUnitario?: number;
+  localizacao?: string;
+  status?: string;
 };

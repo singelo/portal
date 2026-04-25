@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Activity, BriefcaseBusiness, FileText, PlusCircle, Users } from 'lucide-react';
+import { Banknote, BriefcaseBusiness, FileText, PlusCircle, Users } from 'lucide-react';
 import { SectionHeading } from '../components/section-heading';
 import { StatCard } from '../components/stat-card';
-import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
-import { Card, CardDescription, CardTitle } from '../components/ui/card';
+import { Card, CardTitle } from '../components/ui/card';
 import { ClienteModal, OrdemServicoModal, PropostaModal } from '../features/operacao/action-modals';
+import { formatCurrency } from '../lib/format';
 import { fetchClientes, fetchDashboardSummary, queryKeys } from '../services/queries';
 
 export function DashboardPage() {
@@ -35,7 +35,7 @@ export function DashboardPage() {
       <SectionHeading
         eyebrow="Visao operacional"
         title="Dashboard"
-        description="Leitura rapida do negocio com atalhos para cadastros e fluxos mais usados."
+        description=""
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -52,42 +52,18 @@ export function DashboardPage() {
           value={summaryQuery.isLoading ? '...' : String(data?.osAbertas ?? 0)}
         />
         <StatCard
-          hint="Pendencias comerciais"
-          icon={Activity}
-          label="Propostas"
-          value={summaryQuery.isLoading ? '...' : String(data?.propostasPendentes ?? 0)}
+          hint="Soma das OS finalizadas"
+          icon={Banknote}
+          label="Faturamento geral"
+          value={summaryQuery.isLoading ? '...' : formatCurrency(data?.faturamentoGeral ?? 0)}
         />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card className="fade-up">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <CardTitle>Direcao da operacao</CardTitle>
-              <CardDescription className="mt-2">
-                Esta area pode virar o seu cockpit principal com mais blocos de KPI, agenda, contas, OS e vendas.
-              </CardDescription>
-            </div>
-            <Badge tone="success">Base pronta para crescer</Badge>
-          </div>
-
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <MetricBlock label="Agenda de hoje" value={String(data?.agendaHoje ?? 0)} />
-            <MetricBlock label="Faturamento do mes" value={String(data?.faturamentoMes ?? 0)} />
-          </div>
-
-          {summaryQuery.isError ? (
-            <div className="mt-6 rounded-2xl border border-danger/15 bg-danger/10 px-4 py-3 text-sm text-danger">
-              {(summaryQuery.error as Error).message}
-            </div>
-          ) : null}
-        </Card>
-
+        
         <Card className="fade-up">
           <CardTitle>Acoes rapidas</CardTitle>
-          <CardDescription className="mt-2">
-            Atalhos para abrir cadastro, ordem de servico e proposta sem sair do fluxo principal.
-          </CardDescription>
+          
           <div className="mt-6 space-y-3">
             <Button className="w-full justify-start" variant="outline" onClick={() => setClienteOpen(true)}>
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -102,29 +78,13 @@ export function DashboardPage() {
               Gerar proposta
             </Button>
           </div>
-          <div className="mt-6 rounded-xl border border-border bg-surface-muted px-4 py-3 text-sm leading-6 text-muted-foreground">
-            Esse bloco substitui os atalhos improvisados do sistema antigo e centraliza os modais mais usados.
-          </div>
+          
         </Card>
       </div>
 
       <ClienteModal open={clienteOpen} onClose={() => setClienteOpen(false)} />
       <OrdemServicoModal open={osOpen} onClose={() => setOsOpen(false)} />
       <PropostaModal open={propostaOpen} onClose={() => setPropostaOpen(false)} />
-    </div>
-  );
-}
-
-type MetricBlockProps = {
-  label: string;
-  value: string;
-};
-
-function MetricBlock({ label, value }: MetricBlockProps) {
-  return (
-    <div className="rounded-xl border border-border bg-surface-muted px-4 py-4">
-      <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">{label}</p>
-      <p className="mt-3 text-2xl font-semibold text-foreground">{value}</p>
     </div>
   );
 }

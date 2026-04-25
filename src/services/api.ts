@@ -8,6 +8,7 @@ import type {
   ProposalFile,
   PdfPayload,
   SessionPayload,
+  StockItem,
 } from '../types/api';
 import { SESSION_INVALIDATED_EVENT } from './auth';
 
@@ -25,9 +26,16 @@ type ActionMap = {
   'dashboard.summary': DashboardSummary;
   'clientes.list': Cliente[];
   'clientes.create': Cliente;
+  'clientes.update': Cliente;
+  'clientes.delete': { success?: boolean };
   'propostas.list': ProposalFile[];
+  'estoque.list': StockItem[];
+  'estoque.create': StockItem;
+  'estoque.delete': { success?: boolean };
   'os.list': OrdemServico[];
   'os.create': OrdemServico;
+  'os.update': OrdemServico;
+  'os.delete': { success?: boolean };
   'os.details': OrdemServicoDetails;
   'os.status.update': OrdemServico;
   'os.items.create': OrdemServicoItem;

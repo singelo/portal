@@ -8,9 +8,9 @@ import { Dialog, DialogFooter } from '../../components/ui/dialog';
 import { Input } from '../../components/ui/input';
 import { Select } from '../../components/ui/select';
 import { Textarea } from '../../components/ui/textarea';
-import { createCliente, createOrdemServico, createOrdemServicoItem, generatePropostaPdf, updateOrdemServicoItem, updateOrdemServicoStatus } from '../../services/mutations';
-import { fetchClientes, queryKeys } from '../../services/queries';
-import type { OrdemServicoItem, OrdemServicoStatus } from '../../types/api';
+import { createCliente, createOrdemServico, createOrdemServicoItem, createStockItem, generatePropostaPdf, updateCliente, updateOrdemServico, updateOrdemServicoItem, updateOrdemServicoStatus } from '../../services/mutations';
+import { fetchClientes, fetchStockItems, queryKeys } from '../../services/queries';
+import type { Cliente, OrdemServico, OrdemServicoItem, OrdemServicoStatus, StockItem } from '../../types/api';
 
 const clienteSchema = z.object({
   nome: z.string().trim().min(1, 'Informe o nome do cliente.'),
@@ -32,10 +32,20 @@ const propostaSchema = z.object({
 });
 
 const osItemSchema = z.object({
+  estoqueItemId: z.string().trim().optional(),
   tipo: z.enum(['Produto', 'Servico']),
   descricao: z.string().trim().min(1, 'Descreva o item.'),
   quantidade: z.string().trim().min(1, 'Informe a quantidade.'),
   precoUnitario: z.string().trim().min(1, 'Informe o preco unitario.'),
+});
+
+const estoqueSchema = z.object({
+  nome: z.string().trim().min(1, 'Informe o nome do item.'),
+  categoria: z.string().trim().optional(),
+  unidade: z.string().trim().min(1, 'Informe a unidade.'),
+  quantidade: z.string().trim().min(1, 'Informe a quantidade.'),
+  custoUnitario: z.string().trim().optional(),
+  localizacao: z.string().trim().optional(),
 });
 
 const osStatusSchema = z.object({
@@ -44,11 +54,13 @@ const osStatusSchema = z.object({
 
 type ClienteModalProps = {
   open: boolean;
+  cliente?: Cliente | null;
   onClose: () => void;
 };
 
 type OrdemServicoModalProps = {
   open: boolean;
+  ordem?: OrdemServico | null;
   onClose: () => void;
 };
 
@@ -71,21 +83,26 @@ type OrdemServicoStatusModalProps = {
   onClose: () => void;
 };
 
-export function ClienteModal({ open, onClose }: ClienteModalProps) {
+type EstoqueItemModalProps = {
+  open: boolean;
+  onClose: () => void;
+};
+
+export function ClienteModal({ open, cliente, onClose }: ClienteModalProps) {
   const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof clienteSchema>>({
     resolver: zodResolver(clienteSchema),
-    defaultValues: {
-      nome: '',
-      telefone: '',
-      endereco: '',
-      observacoes: '',
-      cnpj: '',
-    },
+    defaultValues: getClienteDefaultValues(cliente),
   });
 
   const mutation = useMutation({
-    mutationFn: createCliente,
+    mutationFn: async (values: z.infer<typeof clienteSchema>) => {
+      if (cliente?.id != null) {
+        return updateCliente(cliente.id, values);
+      }
+
+      return createCliente(values);
+    },
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.clientes }),
@@ -97,16 +114,16 @@ export function ClienteModal({ open, onClose }: ClienteModalProps) {
   });
 
   useEffect(() => {
-    if (!open) {
-      form.reset();
+    if (open) {
+      form.reset(getClienteDefaultValues(cliente));
     }
-  }, [form, open]);
+  }, [cliente, form, open]);
 
   return (
     <Dialog
       onClose={onClose}
       open={open}
-      title="Novo cliente"
+      title={cliente ? 'Editar cliente' : 'Novo cliente'}
     >
       <form
         className="space-y-4"
@@ -165,7 +182,7 @@ export function ClienteModal({ open, onClose }: ClienteModalProps) {
             Cancelar
           </Button>
           <Button disabled={mutation.isPending} type="submit">
-            {mutation.isPending ? 'Salvando...' : 'Salvar cliente'}
+            {mutation.isPending ? 'Salvando...' : cliente ? 'Salvar alteracoes' : 'Salvar cliente'}
           </Button>
         </DialogFooter>
       </form>
@@ -173,7 +190,7 @@ export function ClienteModal({ open, onClose }: ClienteModalProps) {
   );
 }
 
-export function OrdemServicoModal({ open, onClose }: OrdemServicoModalProps) {
+export function OrdemServicoModal({ open, ordem, onClose }: OrdemServicoModalProps) {
   const queryClient = useQueryClient();
   const clientesQuery = useQuery({
     enabled: open,
@@ -184,18 +201,22 @@ export function OrdemServicoModal({ open, onClose }: OrdemServicoModalProps) {
 
   const form = useForm<z.infer<typeof ordemServicoSchema>>({
     resolver: zodResolver(ordemServicoSchema),
-    defaultValues: {
-      clienteId: '',
-      descricao: '',
-    },
+    defaultValues: getOrdemServicoDefaultValues(ordem),
   });
 
   const mutation = useMutation({
-    mutationFn: createOrdemServico,
+    mutationFn: async (values: z.infer<typeof ordemServicoSchema>) => {
+      if (ordem) {
+        return updateOrdemServico(ordem.id, values);
+      }
+
+      return createOrdemServico(values);
+    },
     onSuccess: async () => {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.ordensServico }),
         queryClient.invalidateQueries({ queryKey: queryKeys.dashboardSummary }),
+        ...(ordem ? [queryClient.invalidateQueries({ queryKey: queryKeys.ordemServicoDetails(ordem.id) })] : []),
       ]);
       form.reset();
       onClose();
@@ -203,16 +224,16 @@ export function OrdemServicoModal({ open, onClose }: OrdemServicoModalProps) {
   });
 
   useEffect(() => {
-    if (!open) {
-      form.reset();
+    if (open) {
+      form.reset(getOrdemServicoDefaultValues(ordem));
     }
-  }, [form, open]);
+  }, [form, open, ordem]);
 
   return (
     <Dialog
       onClose={onClose}
       open={open}
-      title="Nova ordem de servico"
+      title={ordem ? 'Editar ordem de servico' : 'Nova ordem de servico'}
     >
       <form
         className="space-y-4"
@@ -243,7 +264,7 @@ export function OrdemServicoModal({ open, onClose }: OrdemServicoModalProps) {
             Cancelar
           </Button>
           <Button disabled={mutation.isPending || clientesQuery.isLoading} type="submit">
-            {mutation.isPending ? 'Salvando...' : 'Criar OS'}
+            {mutation.isPending ? 'Salvando...' : ordem ? 'Salvar alteracoes' : 'Criar OS'}
           </Button>
         </DialogFooter>
       </form>
@@ -356,6 +377,12 @@ export function PropostaModal({ open, onClose }: PropostaModalProps) {
 
 export function OrdemServicoItemModal({ open, osId, item, onClose }: OrdemServicoItemModalProps) {
   const queryClient = useQueryClient();
+  const estoqueQuery = useQuery({
+    enabled: open,
+    queryKey: queryKeys.estoque,
+    queryFn: fetchStockItems,
+    staleTime: 2 * 60_000,
+  });
   const form = useForm<z.infer<typeof osItemSchema>>({
     resolver: zodResolver(osItemSchema),
     defaultValues: getItemDefaultValues(item),
@@ -367,10 +394,29 @@ export function OrdemServicoItemModal({ open, osId, item, onClose }: OrdemServic
     }
   }, [form, item, open]);
 
+  useEffect(() => {
+    const subscription = form.watch((values, context) => {
+      if (context.name !== 'estoqueItemId') return;
+
+      const selected = (estoqueQuery.data ?? []).find((estoqueItem) => estoqueItem.id === values.estoqueItemId);
+      if (!selected) return;
+
+      form.setValue('tipo', 'Produto', { shouldDirty: true });
+      form.setValue('descricao', selected.nome, { shouldDirty: true });
+      form.setValue('precoUnitario', formatCurrencyInput(selected.custoUnitario), { shouldDirty: true });
+      if (!values.quantidade) {
+        form.setValue('quantidade', '1', { shouldDirty: true });
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [estoqueQuery.data, form]);
+
   const mutation = useMutation({
     mutationFn: async (values: z.infer<typeof osItemSchema>) => {
       const payload = {
         osId,
+        estoqueItemId: values.estoqueItemId || '',
         tipo: values.tipo,
         descricao: values.descricao,
         quantidade: Number(values.quantidade),
@@ -412,6 +458,17 @@ export function OrdemServicoItemModal({ open, osId, item, onClose }: OrdemServic
           </Select>
         </FormField>
 
+        <FormField label="Puxar do estoque">
+          <Select {...form.register('estoqueItemId')}>
+            <option value="">Item livre</option>
+            {(estoqueQuery.data ?? []).map((estoqueItem) => (
+              <option key={estoqueItem.id} value={estoqueItem.id}>
+                {estoqueItem.nome} • {formatStockQuantity(estoqueItem)}
+              </option>
+            ))}
+          </Select>
+        </FormField>
+
         <FormField error={form.formState.errors.descricao?.message} label="Descricao">
           <Input placeholder="Descricao do item" {...form.register('descricao')} />
         </FormField>
@@ -449,6 +506,7 @@ export function OrdemServicoItemModal({ open, osId, item, onClose }: OrdemServic
         </div>
 
         {mutation.error ? <ErrorMessage message={(mutation.error as Error).message} /> : null}
+        {estoqueQuery.isError ? <ErrorMessage message={(estoqueQuery.error as Error).message} /> : null}
 
         <DialogFooter>
           <Button onClick={onClose} type="button" variant="outline">
@@ -456,6 +514,121 @@ export function OrdemServicoItemModal({ open, osId, item, onClose }: OrdemServic
           </Button>
           <Button disabled={mutation.isPending} type="submit">
             {mutation.isPending ? 'Salvando...' : item ? 'Salvar item' : 'Adicionar item'}
+          </Button>
+        </DialogFooter>
+      </form>
+    </Dialog>
+  );
+}
+
+export function EstoqueItemModal({ open, onClose }: EstoqueItemModalProps) {
+  const queryClient = useQueryClient();
+  const form = useForm<z.infer<typeof estoqueSchema>>({
+    resolver: zodResolver(estoqueSchema),
+    defaultValues: {
+      nome: '',
+      categoria: '',
+      unidade: 'un',
+      quantidade: '',
+      custoUnitario: '',
+      localizacao: '',
+    },
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (values: z.infer<typeof estoqueSchema>) =>
+      createStockItem({
+        nome: values.nome,
+        categoria: values.categoria,
+        unidade: values.unidade,
+        quantidade: Number(values.quantidade),
+        custoUnitario: values.custoUnitario ? parseCurrency(values.custoUnitario) : 0,
+        localizacao: values.localizacao,
+      }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.estoque });
+      form.reset();
+      onClose();
+    },
+  });
+
+  useEffect(() => {
+    if (!open) {
+      form.reset({
+        nome: '',
+        categoria: '',
+        unidade: 'un',
+        quantidade: '',
+        custoUnitario: '',
+        localizacao: '',
+      });
+    }
+  }, [form, open]);
+
+  return (
+    <Dialog onClose={onClose} open={open} title="Novo item de estoque">
+      <form
+        className="space-y-4"
+        onSubmit={form.handleSubmit(async (values) => {
+          await mutation.mutateAsync(values);
+        })}
+      >
+        <FormField error={form.formState.errors.nome?.message} label="Nome">
+          <Input placeholder="Nome do material" {...form.register('nome')} />
+        </FormField>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField error={form.formState.errors.categoria?.message} label="Categoria">
+            <Input placeholder="Ex.: Hidraulica" {...form.register('categoria')} />
+          </FormField>
+          <FormField error={form.formState.errors.unidade?.message} label="Unidade">
+            <Input placeholder="un" {...form.register('unidade')} />
+          </FormField>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <FormField error={form.formState.errors.quantidade?.message} label="Quantidade atual">
+            <Controller
+              control={form.control}
+              name="quantidade"
+              render={({ field }) => (
+                <Input
+                  inputMode="numeric"
+                  placeholder="10"
+                  value={field.value ?? ''}
+                  onChange={(event) => field.onChange(maskInteger(event.target.value, 99999))}
+                />
+              )}
+            />
+          </FormField>
+          <FormField error={form.formState.errors.custoUnitario?.message} label="Custo unitario">
+            <Controller
+              control={form.control}
+              name="custoUnitario"
+              render={({ field }) => (
+                <Input
+                  inputMode="decimal"
+                  placeholder="25,00"
+                  value={field.value ?? ''}
+                  onChange={(event) => field.onChange(maskCurrency(event.target.value))}
+                />
+              )}
+            />
+          </FormField>
+        </div>
+
+        <FormField error={form.formState.errors.localizacao?.message} label="Localizacao">
+          <Input placeholder="Prateleira A / Caixa 2" {...form.register('localizacao')} />
+        </FormField>
+
+        {mutation.error ? <ErrorMessage message={(mutation.error as Error).message} /> : null}
+
+        <DialogFooter>
+          <Button onClick={onClose} type="button" variant="outline">
+            Cancelar
+          </Button>
+          <Button disabled={mutation.isPending} type="submit">
+            {mutation.isPending ? 'Salvando...' : 'Salvar item'}
           </Button>
         </DialogFooter>
       </form>
@@ -573,6 +746,7 @@ function formatCurrencyInput(value: number | null | undefined) {
 function getItemDefaultValues(item?: OrdemServicoItem | null): z.infer<typeof osItemSchema> {
   if (!item) {
     return {
+      estoqueItemId: '',
       tipo: 'Produto',
       descricao: '',
       quantidade: '1',
@@ -581,10 +755,45 @@ function getItemDefaultValues(item?: OrdemServicoItem | null): z.infer<typeof os
   }
 
   return {
+    estoqueItemId: item.estoqueItemId ?? '',
     tipo: item.tipo === 'Servico' ? 'Servico' : 'Produto',
     descricao: item.descricao,
     quantidade: String(item.quantidade ?? 1),
     precoUnitario: formatCurrencyInput(item.precoUnitario),
+  };
+}
+
+function getClienteDefaultValues(cliente?: Cliente | null): z.infer<typeof clienteSchema> {
+  if (!cliente) {
+    return {
+      nome: '',
+      telefone: '',
+      endereco: '',
+      observacoes: '',
+      cnpj: '',
+    };
+  }
+
+  return {
+    nome: cliente.nome ?? '',
+    telefone: cliente.telefone ?? '',
+    endereco: cliente.endereco ?? '',
+    observacoes: cliente.observacoes ?? '',
+    cnpj: cliente.cnpj ?? '',
+  };
+}
+
+function getOrdemServicoDefaultValues(ordem?: OrdemServico | null): z.infer<typeof ordemServicoSchema> {
+  if (!ordem) {
+    return {
+      clienteId: '',
+      descricao: '',
+    };
+  }
+
+  return {
+    clienteId: ordem.clienteId ?? '',
+    descricao: ordem.descricao ?? '',
   };
 }
 
@@ -634,4 +843,8 @@ function maskCurrency(value: string) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+}
+
+function formatStockQuantity(item: StockItem) {
+  return `${item.quantidadeAtual} ${item.unidade || 'un'}`.trim();
 }

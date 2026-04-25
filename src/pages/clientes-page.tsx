@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   flexRender,
   getCoreRowModel,
@@ -8,7 +8,7 @@ import {
   useReactTable,
   type ColumnDef,
 } from '@tanstack/react-table';
-import { PlusCircle, Search } from 'lucide-react';
+import { Pencil, PlusCircle, Search, Trash2 } from 'lucide-react';
 import { SectionHeading } from '../components/section-heading';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -16,18 +16,31 @@ import { Card, CardDescription, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Table, TableWrapper, TBodyCell, THeadCell } from '../components/ui/table';
 import { formatDocument } from '../lib/format';
+import { deleteCliente } from '../services/mutations';
 import { fetchClientes, queryKeys } from '../services/queries';
 import type { Cliente } from '../types/api';
 import { ClienteModal } from '../features/operacao/action-modals';
 
 export function ClientesPage() {
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
   const [createOpen, setCreateOpen] = useState(false);
+  const [editingCliente, setEditingCliente] = useState<Cliente | null>(null);
 
   const clientesQuery = useQuery({
     queryKey: queryKeys.clientes,
     queryFn: fetchClientes,
     staleTime: 5 * 60_000,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteCliente,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: queryKeys.clientes }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.dashboardSummary }),
+      ]);
+    },
   });
 
   const columns = useMemo<ColumnDef<Cliente>[]>(
@@ -55,8 +68,38 @@ export function ClientesPage() {
           return <Badge tone={tone}>{status}</Badge>;
         },
       },
+      {
+        id: 'acoes',
+        header: 'Acoes',
+        cell: ({ row }) => (
+          <div className="flex flex-wrap gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setEditingCliente(row.original);
+                setCreateOpen(true);
+              }}
+            >
+              <Pencil className="mr-2 h-4 w-4" />
+              Editar
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={() => {
+                if (!window.confirm(`Excluir "${row.original.nome}" da base de clientes?`)) return;
+                void deleteMutation.mutateAsync(row.original.id ?? '');
+              }}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Excluir
+            </Button>
+          </div>
+        ),
+      },
     ],
-    [],
+    [deleteMutation],
   );
 
   const table = useReactTable({
@@ -127,6 +170,11 @@ export function ClientesPage() {
             {(clientesQuery.error as Error).message}
           </div>
         ) : null}
+        {deleteMutation.error ? (
+          <div className="mt-6 rounded-2xl border border-danger/15 bg-danger/10 px-4 py-3 text-sm text-danger">
+            {(deleteMutation.error as Error).message}
+          </div>
+        ) : null}
 
         <div className="mt-6">
           <TableWrapper>
@@ -191,7 +239,14 @@ export function ClientesPage() {
         </div>
       </Card>
 
-      <ClienteModal open={createOpen} onClose={() => setCreateOpen(false)} />
+      <ClienteModal
+        cliente={editingCliente}
+        open={createOpen}
+        onClose={() => {
+          setCreateOpen(false);
+          setEditingCliente(null);
+        }}
+      />
     </div>
   );
 }

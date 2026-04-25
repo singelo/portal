@@ -10,7 +10,7 @@ import type { SessionPayload } from '../types/api';
 import * as authService from '../services/auth';
 
 type AuthState = {
-  status: 'loading' | 'authenticated' | 'anonymous';
+  status: 'authenticated' | 'anonymous';
   session: SessionPayload | null;
   signIn: (password: string) => ReturnType<typeof authService.login>;
   signOut: () => Promise<void>;

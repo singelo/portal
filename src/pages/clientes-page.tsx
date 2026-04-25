@@ -15,22 +15,16 @@ import { Button } from '../components/ui/button';
 import { Card, CardDescription, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
 import { Table, TableWrapper, TBodyCell, THeadCell } from '../components/ui/table';
-import { formatDocument, formatPhone } from '../lib/format';
-import { apiRequest } from '../services/api';
+import { formatDocument } from '../lib/format';
+import { fetchClientes, queryKeys } from '../services/queries';
 import type { Cliente } from '../types/api';
 
 export function ClientesPage() {
   const [search, setSearch] = useState('');
 
   const clientesQuery = useQuery({
-    queryKey: ['clientes'],
-    queryFn: async () => {
-      const result = await apiRequest('clientes.list');
-      if (!result.ok) {
-        throw new Error(result.error?.message || 'Erro ao carregar clientes.');
-      }
-      return result.data;
-    },
+    queryKey: queryKeys.clientes,
+    queryFn: fetchClientes,
     staleTime: 5 * 60_000,
   });
 
@@ -94,16 +88,13 @@ export function ClientesPage() {
       <SectionHeading
         eyebrow="Cadastro"
         title="Clientes"
-        description="Tabela preparada para crescer com filtros, ordenacao, detalhes e acoes sem depender de HTML montado na mao."
+        description=""
       />
 
       <Card className="fade-up">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <CardTitle>Base de clientes</CardTitle>
-            <CardDescription className="mt-2">
-              Visual mais limpo, mais legivel e pronto para voce encaixar acoes de editar, ver detalhes e criar.
-            </CardDescription>
           </div>
 
           <div className="flex w-full flex-col gap-3 sm:flex-row lg:w-auto">
@@ -111,7 +102,7 @@ export function ClientesPage() {
               <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 className="pl-11"
-                placeholder="Buscar por nome, telefone, CNPJ..."
+                placeholder="Buscar por nome ou CNPJ..."
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />

@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --force",
+    "dev:host": "vite --host --force",
     "typecheck": "tsc --noEmit",
     "build": "vite build",
     "build:pages": "vite build --mode production",

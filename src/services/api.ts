@@ -1,4 +1,13 @@
-import type { ApiResult, Cliente, DashboardSummary, SessionPayload } from '../types/api';
+import type {
+  ApiResult,
+  Cliente,
+  DashboardSummary,
+  OrdemServico,
+  OrdemServicoDetails,
+  OrdemServicoItem,
+  PdfPayload,
+  SessionPayload,
+} from '../types/api';
 
 const API_URL = 'https://red-bush-f22b.mauriciosingelo.workers.dev';
 const DEBUG_STORAGE_KEY = 'rm_debug_api';
@@ -11,6 +20,16 @@ type ActionMap = {
   'auth.logout': { success?: boolean };
   'dashboard.summary': DashboardSummary;
   'clientes.list': Cliente[];
+  'clientes.create': Cliente;
+  'os.list': OrdemServico[];
+  'os.create': OrdemServico;
+  'os.details': OrdemServicoDetails;
+  'os.status.update': OrdemServico;
+  'os.items.create': OrdemServicoItem;
+  'os.items.update': OrdemServicoItem;
+  'os.items.delete': { success?: boolean };
+  'os.pdf': PdfPayload | string;
+  'propostas.generate': PdfPayload | string;
 };
 
 type ApiMetric<TAction extends keyof ActionMap = keyof ActionMap> = {

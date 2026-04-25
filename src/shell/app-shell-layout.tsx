@@ -1,25 +1,15 @@
 import { useState, type PropsWithChildren } from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import {
-  BarChart3,
-  Building2,
-  LogOut,
-  Menu,
-  X,
-} from 'lucide-react';
-import logo from '../assets/logo-rm.png';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { LogOut, Menu, X } from 'lucide-react';
+import { APP_NAME } from '../config/app';
 import { cn } from '../lib/utils';
 import { Button } from '../components/ui/button';
 import { useAuth } from '../stores/auth-store';
-
-const navigation = [
-  { to: '/', label: 'Dashboard', icon: BarChart3 },
-  { to: '/clientes', label: 'Clientes', icon: Building2 },
-];
+import { navigationItems } from './navigation';
 
 export function AppShellLayout({ children }: PropsWithChildren) {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { signOut, session } = useAuth();
+  const { signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -31,8 +21,8 @@ export function AppShellLayout({ children }: PropsWithChildren) {
   return (
     <div className="min-h-dvh">
       <div className="grid min-h-dvh grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)]">
-        <aside className="hidden border-r border-border bg-[#fbfcfd] px-4 py-6 lg:flex lg:flex-col">
-          <SidebarContent sessionName={session?.user?.name} pathname={location.pathname} onLogout={handleLogout} />
+        <aside className="hidden border-r border-border bg-[#fbfcfd] px-4 py-6 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col">
+          <SidebarContent pathname={location.pathname} onLogout={handleLogout} />
         </aside>
 
         <div className="relative flex min-h-dvh flex-col">
@@ -46,14 +36,10 @@ export function AppShellLayout({ children }: PropsWithChildren) {
                 >
                   <Menu className="h-5 w-5" />
                 </button>
-                <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">RM Portal</p>
-                  
-                </div>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">{APP_NAME}</p>
               </div>
 
               <div className="hidden items-center gap-3 md:flex">
-                
                 <Button variant="outline" onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
                   Sair
@@ -72,12 +58,7 @@ export function AppShellLayout({ children }: PropsWithChildren) {
         <div className="fixed inset-0 z-40 bg-slate-900/16 backdrop-blur-sm lg:hidden">
           <div className="absolute left-0 top-0 h-full w-[88vw] max-w-[320px] border-r border-border bg-[#fbfcfd] px-4 py-4 text-foreground shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                
-                <div>
-                  <p className="text-sm font-semibold">RM Portal</p>
-                </div>
-              </div>
+              <p className="text-sm font-semibold">{APP_NAME}</p>
               <button
                 className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white"
                 onClick={() => setMobileOpen(false)}
@@ -88,7 +69,6 @@ export function AppShellLayout({ children }: PropsWithChildren) {
             </div>
 
             <SidebarContent
-              sessionName={session?.user?.name}
               pathname={location.pathname}
               onLogout={async () => {
                 setMobileOpen(false);
@@ -105,20 +85,19 @@ export function AppShellLayout({ children }: PropsWithChildren) {
 
 type SidebarContentProps = {
   pathname: string;
-  sessionName?: string;
   onLogout: () => void | Promise<void>;
   onNavigate?: () => void;
 };
 
-function SidebarContent({ pathname, sessionName, onLogout, onNavigate }: SidebarContentProps) {
+function SidebarContent({ pathname, onLogout, onNavigate }: SidebarContentProps) {
   return (
-    <>
-      
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="px-2 pb-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Navegacao</p>
+      </div>
 
-     
-
-      <nav className="mt-4 flex flex-1 flex-col gap-1.5">
-        {navigation.map(({ to, label, icon: Icon }) => (
+      <nav className="flex flex-col gap-1.5">
+        {navigationItems.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             className={({ isActive }) =>
@@ -137,10 +116,12 @@ function SidebarContent({ pathname, sessionName, onLogout, onNavigate }: Sidebar
         ))}
       </nav>
 
-      <Button className="mt-4 w-full" variant="outline" onClick={() => void onLogout()}>
-        <LogOut className="mr-2 h-4 w-4" />
-        Encerrar sessao
-      </Button>
-    </>
+      <div className="mt-auto pt-6">
+        <Button className="w-full" variant="outline" onClick={() => void onLogout()}>
+          <LogOut className="mr-2 h-4 w-4" />
+          Encerrar sessao
+        </Button>
+      </div>
+    </div>
   );
 }

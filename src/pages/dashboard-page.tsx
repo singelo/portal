@@ -6,19 +6,13 @@ import { StatCard } from '../components/stat-card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardDescription, CardTitle } from '../components/ui/card';
-import { apiRequest } from '../services/api';
+import { fetchClientes, fetchDashboardSummary, queryKeys } from '../services/queries';
 
 export function DashboardPage() {
   const queryClient = useQueryClient();
   const summaryQuery = useQuery({
-    queryKey: ['dashboard-summary'],
-    queryFn: async () => {
-      const result = await apiRequest('dashboard.summary');
-      if (!result.ok) {
-        throw new Error(result.error?.message || 'Erro ao carregar o dashboard.');
-      }
-      return result.data;
-    },
+    queryKey: queryKeys.dashboardSummary,
+    queryFn: fetchDashboardSummary,
     staleTime: 2 * 60_000,
   });
 
@@ -26,14 +20,8 @@ export function DashboardPage() {
 
   useEffect(() => {
     queryClient.prefetchQuery({
-      queryKey: ['clientes'],
-      queryFn: async () => {
-        const result = await apiRequest('clientes.list');
-        if (!result.ok) {
-          throw new Error(result.error?.message || 'Erro ao carregar clientes.');
-        }
-        return result.data;
-      },
+      queryKey: queryKeys.clientes,
+      queryFn: fetchClientes,
       staleTime: 5 * 60_000,
     });
   }, [queryClient]);
@@ -42,8 +30,8 @@ export function DashboardPage() {
     <div className="space-y-6 md:space-y-8">
       <SectionHeading
         eyebrow="Visao operacional"
-        title="Dashboard do negocio"
-        description="Um painel mais limpo para voce bater o olho e entender volume, andamento e saude geral da operacao."
+        title="Dashboard"
+        description=""
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

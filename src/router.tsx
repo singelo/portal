@@ -1,6 +1,5 @@
 import { Navigate, Outlet, createHashRouter } from 'react-router-dom';
 import { AppShellLayout } from './shell/app-shell-layout';
-import { AppLoader } from './components/app-loader';
 import { useAuth } from './stores/auth-store';
 import { LoginPage } from './pages/login-page';
 import { DashboardPage } from './pages/dashboard-page';
@@ -9,10 +8,6 @@ import { NotFoundPage } from './pages/not-found-page';
 
 function ProtectedLayout() {
   const { status } = useAuth();
-
-  if (status === 'loading') {
-    return <AppLoader label="Preparando o painel..." />;
-  }
 
   if (status === 'anonymous') {
     return <Navigate to="/login" replace />;
@@ -27,10 +22,6 @@ function ProtectedLayout() {
 
 function PublicOnlyRoute() {
   const { status } = useAuth();
-
-  if (status === 'loading') {
-    return <AppLoader label="Verificando acesso..." />;
-  }
 
   if (status === 'authenticated') {
     return <Navigate to="/" replace />;

@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowRight, LockKeyhole } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo-rm.png';
+import { APP_DESCRIPTION, APP_NAME } from '../config/app';
 import { Button } from '../components/ui/button';
 import { Card, CardDescription, CardTitle } from '../components/ui/card';
 import { Input } from '../components/ui/input';
@@ -61,9 +62,8 @@ export function LoginPage() {
               </div>
             </div>
             <p className="mt-8 max-w-xl text-base leading-7 text-muted-foreground">
-              A base agora esta mais organizada para crescer fael, brilha fdp!
+              {APP_DESCRIPTION}
             </p>
-            
           </div>
         </section>
 
@@ -71,10 +71,9 @@ export function LoginPage() {
           <div className="mb-8 flex items-center gap-4">
             <img alt="RM Portal" className="h-12 w-12 rounded-xl object-cover" src={logo} />
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Acesso seguro</p>
-              <CardTitle className="mt-2 text-2xl md:text-3xl">Entrar no RM Portal</CardTitle>
+              <CardTitle className="mt-2 text-2xl md:text-3xl">Entrar no {APP_NAME}</CardTitle>
               <CardDescription className="mt-2">
-                Use a senha configurada no backend para acessar o painel.
+                Use a senha configurada no servidor para acessar o painel.
               </CardDescription>
             </div>
           </div>
@@ -107,8 +106,6 @@ export function LoginPage() {
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </form>
-
-          
         </Card>
       </div>
     </div>

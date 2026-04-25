@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @page {
+      margin: 10mm 12mm;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #222;
+      font-size: 13px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .page {
+      min-height: 267mm;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content {
+      flex: 1;
+    }
+
+    .top-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      width: 90px;
+      display: block;
+    }
+
+    .company-info {
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .company-name {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .document-header {
+      display: block;
+    }
+
+    h1 {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 10px 0 4px 0;
+    }
+
+    .document-date {
+      font-size: 12px;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #444;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 14px;
+      font-weight: bold;
+      border-left: 4px solid #444;
+      padding-left: 6px;
+      margin-top: 20px;
+      margin-bottom: 6px;
+    }
+
+    .info-block {
+      margin-left: 4px;
+      line-height: 1.5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th {
+      background: #f1f1f1;
+      padding: 8px;
+      font-size: 13px;
+      border-bottom: 1px solid #ccc;
+      text-align: left;
+    }
+
+    td {
+      padding: 6px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .right {
+      text-align: right;
+    }
+
+    .total-line {
+      text-align: right;
+      font-size: 15px;
+      font-weight: bold;
+      margin-top: 14px;
+    }
+
+    .footer-tech {
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #555;
+      padding-top: 32px;
+    }
+
+    .tech-box {
+      display: inline-block;
+      width: 220px;
+      text-align: right;
+    }
+
+    .tech-line {
+      border-top: 1px solid #999;
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <? 
+    function fmtBRL(v) {
+      const n = Number(v || 0);
+      return n.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    const numeroOs = String(ordem.id || '');
+    const total = itens.reduce(function(sum, item) { return sum + Number(item.total || 0); }, 0);
+  ?>
+
+  <div class="page">
+    <div class="content">
+      <div class="top-header">
+        <? if (logoSrc) { ?>
+          <img class="logo" src="<?!= logoSrc ?>">
+        <? } else { ?>
+          <div></div>
+        <? } ?>
+
+        <div class="company-info">
+          <div class="company-name">RM Manutenções</div>
+          CNPJ: 52.049.180/0001-08<br>
+          Telefone: 21 96402-9828<br>
+          Email: corporativormmanutencoes@gmail.com
+        </div>
+      </div>
+
+      <div class="document-header">
+        <h1>OS Nº <?= numeroOs ?></h1>
+        <div class="document-date">Emitida em: <?= generatedAt ?></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">Cliente</div>
+      <div class="info-block">
+        <b>Nome:</b> <?= cliente && cliente.nome ? cliente.nome : (ordem.clienteNome || '-') ?><br>
+        <? if (cliente && cliente.telefone) { ?><b>Telefone:</b> <?= cliente.telefone ?><br><? } ?>
+        <? if (cliente && cliente.endereco) { ?><b>Endereço:</b> <?= cliente.endereco ?><br><? } ?>
+        <? if (cliente && cliente.cnpj) { ?><b>CNPJ:</b> <?= cliente.cnpj ?><br><? } ?>
+      </div>
+
+      <div class="section-title">Descrição</div>
+      <div class="info-block">
+        <?= ordem.descricao || '-' ?>
+      </div>
+
+      <div class="section-title">Itens / Serviços</div>
+
+      <table>
+        <tr>
+          <th style="width:100px">Tipo</th>
+          <th>Descrição</th>
+          <th style="width:60px" class="right">Qtd</th>
+          <th style="width:90px" class="right">Preço</th>
+          <th style="width:90px" class="right">Total</th>
+        </tr>
+
+        <? for (let i = 0; i < itens.length; i++) { ?>
+          <tr>
+            <td><?= itens[i].tipo ?></td>
+            <td><?= itens[i].descricao ?></td>
+            <td class="right"><?= itens[i].quantidade ?></td>
+            <td class="right">R$ <?= fmtBRL(itens[i].precoUnitario) ?></td>
+            <td class="right">R$ <?= fmtBRL(itens[i].total) ?></td>
+          </tr>
+        <? } ?>
+      </table>
+
+      <div class="total-line">
+        Total: R$ <?= fmtBRL(total) ?>
+      </div>
+    </div>
+
+    <div class="footer-tech">
+      <div class="tech-box">
+        <div class="tech-line"></div>
+        Técnico Responsável<br>
+        <b>Rafael Monteiro</b>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

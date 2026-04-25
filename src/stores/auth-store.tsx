@@ -8,6 +8,7 @@ import {
 } from 'react';
 import type { SessionPayload } from '../types/api';
 import * as authService from '../services/auth';
+import { SESSION_INVALIDATED_EVENT } from '../services/auth';
 
 type AuthState = {
   status: 'authenticated' | 'anonymous';
@@ -76,6 +77,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
     if (authService.hasToken()) {
       void refreshSession();
     }
+  }, []);
+
+  useEffect(() => {
+    function handleSessionInvalidated() {
+      setSession(null);
+      setStatus('anonymous');
+    }
+
+    window.addEventListener(SESSION_INVALIDATED_EVENT, handleSessionInvalidated);
+    return () => {
+      window.removeEventListener(SESSION_INVALIDATED_EVENT, handleSessionInvalidated);
+    };
   }, []);
 
   const value = useMemo<AuthState>(

@@ -111,3 +111,12 @@ export type PropostaInput = {
 export type PdfPayload = {
   url: string;
 };
+
+export type ProposalFile = {
+  id: string;
+  name: string;
+  url: string;
+  createdAt?: string;
+  updatedAt?: string;
+  sizeBytes?: number;
+};

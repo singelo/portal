@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @page {
+      size: A4;
+      margin: 25mm;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 11px;
+      color: #000;
+      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .header-table td {
+      vertical-align: middle;
+    }
+
+    .logo-cell {
+      width: 140px;
+    }
+
+    .logo {
+      width: 110px;
+      height: auto;
+      display: block;
+    }
+
+    .company-info {
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .date-line {
+      text-align: right;
+      margin: 18px 0 20px 0;
+      font-size: 11px;
+    }
+
+    .destinatario {
+      margin-bottom: 15px;
+    }
+
+    .referencia {
+      font-size: 13px;
+      font-weight: bold;
+      margin: 18px 0 20px 0;
+    }
+
+    .paragraph {
+      margin: 0 0 12px 0;
+    }
+
+    .assinatura-wrap {
+      margin-top: 40px;
+    }
+
+    .assinatura-label {
+      margin-bottom: 25px;
+    }
+
+    .assinatura-box {
+      width: 320px;
+      text-align: left;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    .assinatura-line {
+      border-top: 1px solid #000;
+      margin-bottom: 6px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <table class="header-table">
+    <tr>
+      <td class="logo-cell">
+        <? if (logoSrc) { ?>
+          <img class="logo" src="<?!= logoSrc ?>">
+        <? } ?>
+      </td>
+      <td class="company-info">
+        <b>RM Manutenções</b><br>
+        CNPJ: 52.049.180/0001-08<br>
+        Telefone: (21) 96402-9828<br>
+        Email: corporativormmanutencoes@gmail.com
+      </td>
+    </tr>
+  </table>
+
+  <div class="date-line">
+    Rio de Janeiro, <?= generatedAtExtenso ?>
+  </div>
+
+  <div class="destinatario">
+    <b>AO</b><br>
+    <?= cliente.nome || '-' ?>
+  </div>
+
+  <div class="referencia">
+    <b>REF.: PROPOSTA DE MANUTENÇÃO DE BOMBAS DE ABASTECIMENTO</b>
+  </div>
+
+  <div class="paragraph">Prezado Senhor,</div>
+
+  <div class="paragraph">
+    Vimos por meio desta apresentar nossa proposta para manutenção em bombas de abastecimento do posto.
+  </div>
+
+  <div class="paragraph">
+    <b>Valor:</b> <?= valor ?><br>
+    <b>Prazo de atendimento:</b> <?= prazo ?> horas
+  </div>
+
+  <div class="paragraph">
+    Peças não inclusas.
+  </div>
+
+  <div class="paragraph">
+    Não estão inclusos serviços de lanternagem, pintura ou qualquer avaria causada por fenômenos da natureza ou problemas provenientes da rede elétrica.
+  </div>
+
+  <div class="paragraph">
+    Sem mais, ficamos no aguardo de seu retorno.
+  </div>
+
+  <div class="assinatura-wrap">
+    <div class="assinatura-label">Atenciosamente,</div>
+
+    <div class="assinatura-box">
+      <div class="assinatura-line"></div>
+      RAFAEL MONTEIRO<br>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,15 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Activity, BriefcaseBusiness, CalendarClock, Users } from 'lucide-react';
+import { Activity, BriefcaseBusiness, FileText, PlusCircle, Users } from 'lucide-react';
 import { SectionHeading } from '../components/section-heading';
 import { StatCard } from '../components/stat-card';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardDescription, CardTitle } from '../components/ui/card';
+import { ClienteModal, OrdemServicoModal, PropostaModal } from '../features/operacao/action-modals';
 import { fetchClientes, fetchDashboardSummary, queryKeys } from '../services/queries';
 
 export function DashboardPage() {
   const queryClient = useQueryClient();
+  const [clienteOpen, setClienteOpen] = useState(false);
+  const [osOpen, setOsOpen] = useState(false);
+  const [propostaOpen, setPropostaOpen] = useState(false);
   const summaryQuery = useQuery({
     queryKey: queryKeys.dashboardSummary,
     queryFn: fetchDashboardSummary,
@@ -31,7 +35,7 @@ export function DashboardPage() {
       <SectionHeading
         eyebrow="Visao operacional"
         title="Dashboard"
-        description=""
+        description="Leitura rapida do negocio com atalhos para cadastros e fluxos mais usados."
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -53,12 +57,6 @@ export function DashboardPage() {
           label="Propostas"
           value={summaryQuery.isLoading ? '...' : String(data?.propostasPendentes ?? 0)}
         />
-        <StatCard
-          hint="Saude da plataforma"
-          icon={CalendarClock}
-          label="Status"
-          value={summaryQuery.isLoading ? '...' : String(data?.status ?? 'online')}
-        />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
@@ -73,10 +71,9 @@ export function DashboardPage() {
             <Badge tone="success">Base pronta para crescer</Badge>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
             <MetricBlock label="Agenda de hoje" value={String(data?.agendaHoje ?? 0)} />
             <MetricBlock label="Faturamento do mes" value={String(data?.faturamentoMes ?? 0)} />
-            <MetricBlock label="Status da API" value={String(data?.status ?? 'online')} />
           </div>
 
           {summaryQuery.isError ? (
@@ -87,27 +84,33 @@ export function DashboardPage() {
         </Card>
 
         <Card className="fade-up">
-          <CardTitle>Proximos encaixes recomendados</CardTitle>
+          <CardTitle>Acoes rapidas</CardTitle>
           <CardDescription className="mt-2">
-            A estrutura ja esta pronta para receber os modulos mais comuns sem virar bagunca.
+            Atalhos para abrir cadastro, ordem de servico e proposta sem sair do fluxo principal.
           </CardDescription>
           <div className="mt-6 space-y-3">
-            {[
-              'Tabela de OS com filtros, status e prioridade.',
-              'Formulario de clientes com validacao forte.',
-              'Timeline ou funil de propostas.',
-              'Cards de alerta para vencimentos e pendencias.',
-            ].map((item) => (
-              <div key={item} className="rounded-xl border border-border bg-surface-muted px-4 py-3 text-sm text-muted-foreground">
-                {item}
-              </div>
-            ))}
+            <Button className="w-full justify-start" variant="outline" onClick={() => setClienteOpen(true)}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Novo cliente
+            </Button>
+            <Button className="w-full justify-start" variant="outline" onClick={() => setOsOpen(true)}>
+              <BriefcaseBusiness className="mr-2 h-4 w-4" />
+              Nova ordem de servico
+            </Button>
+            <Button className="w-full justify-start" variant="outline" onClick={() => setPropostaOpen(true)}>
+              <FileText className="mr-2 h-4 w-4" />
+              Gerar proposta
+            </Button>
           </div>
-          <Button className="mt-6 w-full" variant="outline">
-            Continuar evoluindo o painel
-          </Button>
+          <div className="mt-6 rounded-xl border border-border bg-surface-muted px-4 py-3 text-sm leading-6 text-muted-foreground">
+            Esse bloco substitui os atalhos improvisados do sistema antigo e centraliza os modais mais usados.
+          </div>
         </Card>
       </div>
+
+      <ClienteModal open={clienteOpen} onClose={() => setClienteOpen(false)} />
+      <OrdemServicoModal open={osOpen} onClose={() => setOsOpen(false)} />
+      <PropostaModal open={propostaOpen} onClose={() => setPropostaOpen(false)} />
     </div>
   );
 }

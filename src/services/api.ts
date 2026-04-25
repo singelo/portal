@@ -5,14 +5,18 @@ import type {
   OrdemServico,
   OrdemServicoDetails,
   OrdemServicoItem,
+  ProposalFile,
   PdfPayload,
   SessionPayload,
 } from '../types/api';
+import { SESSION_INVALIDATED_EVENT } from './auth';
 
 const API_URL = 'https://red-bush-f22b.mauriciosingelo.workers.dev';
 const DEBUG_STORAGE_KEY = 'rm_debug_api';
 const METRICS_STORAGE_KEY = 'rm_api_metrics';
 const MAX_METRICS = 100;
+const TOKEN_KEY = 'rm_token';
+const EXPIRES_KEY = 'rm_expires_at';
 
 type ActionMap = {
   'auth.login': SessionPayload;
@@ -21,6 +25,7 @@ type ActionMap = {
   'dashboard.summary': DashboardSummary;
   'clientes.list': Cliente[];
   'clientes.create': Cliente;
+  'propostas.list': ProposalFile[];
   'os.list': OrdemServico[];
   'os.create': OrdemServico;
   'os.details': OrdemServicoDetails;
@@ -106,6 +111,10 @@ export async function apiRequest<TAction extends keyof ActionMap>(
 
       if (debugEnabled) {
         logMetric(window.__RM_API_METRICS__?.[0]);
+      }
+
+      if (!parsed.ok && isInvalidSessionError(parsed.error?.message)) {
+        invalidateStoredSession();
       }
 
       return parsed;
@@ -205,4 +214,17 @@ function logMetric(metric: ApiMetric | undefined) {
   } else {
     console.warn(summary, metric);
   }
+}
+
+function isInvalidSessionError(message: string | undefined) {
+  const normalized = String(message || '').toLowerCase();
+  return normalized.includes('sessao invalida') || normalized.includes('sessão inválida') || normalized.includes('sessao expirada') || normalized.includes('sessão expirada');
+}
+
+function invalidateStoredSession() {
+  if (typeof window === 'undefined') return;
+
+  window.localStorage.removeItem(TOKEN_KEY);
+  window.localStorage.removeItem(EXPIRES_KEY);
+  window.dispatchEvent(new CustomEvent(SESSION_INVALIDATED_EVENT));
 }

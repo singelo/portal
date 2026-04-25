@@ -8,7 +8,7 @@ import {
   useReactTable,
   type ColumnDef,
 } from '@tanstack/react-table';
-import { Search } from 'lucide-react';
+import { PlusCircle, Search } from 'lucide-react';
 import { SectionHeading } from '../components/section-heading';
 import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
@@ -18,9 +18,11 @@ import { Table, TableWrapper, TBodyCell, THeadCell } from '../components/ui/tabl
 import { formatDocument } from '../lib/format';
 import { fetchClientes, queryKeys } from '../services/queries';
 import type { Cliente } from '../types/api';
+import { ClienteModal } from '../features/operacao/action-modals';
 
 export function ClientesPage() {
   const [search, setSearch] = useState('');
+  const [createOpen, setCreateOpen] = useState(false);
 
   const clientesQuery = useQuery({
     queryKey: queryKeys.clientes,
@@ -85,11 +87,18 @@ export function ClientesPage() {
 
   return (
     <div className="space-y-6 md:space-y-8">
-      <SectionHeading
-        eyebrow="Cadastro"
-        title="Clientes"
-        description=""
-      />
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <SectionHeading
+          eyebrow="Cadastro"
+          title="Clientes"
+          description="Base principal de clientes para atendimento, OS, proposta e historico comercial."
+        />
+
+        <Button onClick={() => setCreateOpen(true)}>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          Novo cliente
+        </Button>
+      </div>
 
       <Card className="fade-up">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -107,7 +116,9 @@ export function ClientesPage() {
                 onChange={(event) => setSearch(event.target.value)}
               />
             </div>
-            <Button variant="secondary">Novo cliente</Button>
+            <Button variant="secondary" onClick={() => setCreateOpen(true)}>
+              Novo cliente
+            </Button>
           </div>
         </div>
 
@@ -179,6 +190,8 @@ export function ClientesPage() {
           </div>
         </div>
       </Card>
+
+      <ClienteModal open={createOpen} onClose={() => setCreateOpen(false)} />
     </div>
   );
 }

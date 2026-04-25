@@ -3,6 +3,7 @@ import type { ApiResult, SessionPayload } from '../types/api';
 
 const TOKEN_KEY = 'rm_token';
 const EXPIRES_KEY = 'rm_expires_at';
+export const SESSION_INVALIDATED_EVENT = 'rm:session-invalidated';
 
 export async function login(password: string) {
   const result = await apiRequest('auth.login', { password });
@@ -44,6 +45,7 @@ export async function logout() {
 export function clearSession() {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(EXPIRES_KEY);
+  window.dispatchEvent(new CustomEvent(SESSION_INVALIDATED_EVENT));
 }
 
 export function hasToken() {

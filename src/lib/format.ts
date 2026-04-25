@@ -22,3 +22,16 @@ export function formatDocument(value: string | null | undefined) {
 
   return value ?? '-';
 }
+
+export function formatCurrency(value: number | null | undefined) {
+  if (value == null || Number.isNaN(value)) {
+    return 'R$ 0,00';
+  }
+
+  return value.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}

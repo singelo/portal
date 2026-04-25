@@ -4,6 +4,8 @@ import { useAuth } from './stores/auth-store';
 import { LoginPage } from './pages/login-page';
 import { DashboardPage } from './pages/dashboard-page';
 import { ClientesPage } from './pages/clientes-page';
+import { OrdensServicoPage } from './pages/ordens-servico-page';
+import { PropostasPage } from './pages/propostas-page';
 import { NotFoundPage } from './pages/not-found-page';
 
 function ProtectedLayout() {
@@ -46,6 +48,14 @@ export const router = createHashRouter([
       {
         path: 'clientes',
         element: <ClientesPage />,
+      },
+      {
+        path: 'ordens-servico',
+        element: <OrdensServicoPage />,
+      },
+      {
+        path: 'propostas',
+        element: <PropostasPage />,
       },
     ],
   },

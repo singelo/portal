@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/portal/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Propostas | RM Portal</title>
+    <link rel="stylesheet" crossorigin href="/portal/assets/index-B6si5SPY.css" />
+  </head>
+  <body>
+    <div class="min-h-dvh">
+      <div class="grid min-h-dvh grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)]">
+        <aside class="hidden border-r border-border bg-[#fbfcfd] px-4 py-6 lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col">
+          <div class="flex h-full min-h-0 flex-col">
+            <div class="px-2 pb-5">
+              <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Navegação</p>
+            </div>
+            <nav class="flex flex-col gap-1.5" id="desktop-nav"></nav>
+            <div class="mt-auto pt-6">
+              <button id="logout" class="inline-flex w-full items-center justify-center rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-surface-muted">
+                Encerrar sessão
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <div class="relative flex min-h-dvh flex-col">
+          <header class="sticky top-0 z-30 border-b border-border bg-white/88 backdrop-blur-xl">
+            <div class="flex w-full items-center justify-between gap-4 px-4 py-4 md:px-6 xl:px-8 2xl:px-10">
+              <div class="flex items-center gap-3">
+                <button id="mobile-menu" class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white text-foreground lg:hidden" type="button">☰</button>
+                <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">RM Portal</p>
+              </div>
+              <a href="/portal/#/orcamentos" class="hidden rounded-xl border border-border bg-white px-4 py-2 text-sm font-medium text-foreground transition hover:bg-surface-muted md:inline-flex">
+                Voltar ao portal
+              </a>
+            </div>
+          </header>
+
+          <main class="flex w-full flex-1 flex-col px-4 py-6 md:px-6 md:py-8 xl:px-8 2xl:px-10">
+            <div class="space-y-6 md:space-y-8">
+              <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                  <p class="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">Comercial</p>
+                  <h1 class="mt-2 text-2xl font-semibold tracking-tight text-foreground md:text-3xl">Propostas</h1>
+                  <p class="mt-2 text-sm text-muted-foreground">Gere propostas comerciais e consulte os PDFs já emitidos.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <button id="refresh" class="inline-flex items-center justify-center rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-medium text-foreground transition hover:bg-surface-muted">Atualizar</button>
+                  <button id="open-generate" class="inline-flex items-center justify-center rounded-xl bg-foreground px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90">Gerar proposta</button>
+                </div>
+              </div>
+
+              <section class="rounded-2xl border border-border bg-white p-5 shadow-soft md:p-6">
+                <div>
+                  <h2 class="text-lg font-semibold text-foreground">Arquivos de propostas</h2>
+                  <p class="mt-2 text-sm text-muted-foreground">PDFs de propostas comerciais salvos no Drive.</p>
+                </div>
+
+                <div class="relative mt-6">
+                  <input id="search" class="flex h-11 w-full rounded-xl border border-border bg-white px-4 py-2 text-sm text-foreground outline-none transition placeholder:text-muted-foreground focus:border-border-strong" placeholder="Buscar por nome do arquivo" />
+                </div>
+
+                <div id="message" class="mt-4 hidden rounded-2xl border px-4 py-3 text-sm"></div>
+                <div id="files" class="mt-6 space-y-3"></div>
+              </section>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <div id="mobile-drawer" class="fixed inset-0 z-40 hidden bg-slate-900/16 backdrop-blur-sm lg:hidden">
+      <div class="absolute left-0 top-0 h-full w-[88vw] max-w-[320px] border-r border-border bg-[#fbfcfd] px-4 py-4 text-foreground shadow-2xl">
+        <div class="mb-4 flex items-center justify-between">
+          <p class="text-sm font-semibold">RM Portal</p>
+          <button id="mobile-close" class="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white">×</button>
+        </div>
+        <nav class="flex flex-col gap-1.5" id="mobile-nav"></nav>
+      </div>
+    </div>
+
+    <div id="generate-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/25 p-4 backdrop-blur-sm">
+      <div class="w-full max-w-xl rounded-2xl border border-border bg-white p-5 shadow-2xl md:p-6">
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-semibold text-foreground">Gerar proposta</h2>
+            <p class="mt-1 text-sm text-muted-foreground">Documento comercial separado do orçamento.</p>
+          </div>
+          <button id="close-generate" class="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-white">×</button>
+        </div>
+
+        <div class="mt-6 space-y-4">
+          <label class="block space-y-2">
+            <span class="text-sm font-medium text-foreground">Cliente</span>
+            <select id="cliente" class="flex h-11 w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground outline-none">
+              <option value="">Carregando clientes...</option>
+            </select>
+          </label>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block space-y-2">
+              <span class="text-sm font-medium text-foreground">Valor</span>
+              <input id="valor" inputmode="decimal" class="flex h-11 w-full rounded-xl border border-border bg-white px-4 py-2 text-sm text-foreground outline-none" placeholder="550,00" />
+            </label>
+
+            <label class="block space-y-2">
+              <span class="text-sm font-medium text-foreground">Prazo</span>
+              <select id="prazo" class="flex h-11 w-full rounded-xl border border-border bg-white px-3 py-2 text-sm text-foreground outline-none">
+                <option value="24">24 horas</option>
+                <option value="72">72 horas</option>
+              </select>
+            </label>
+          </div>
+
+          <div id="form-error" class="hidden rounded-2xl border border-danger/15 bg-danger/10 px-4 py-3 text-sm text-danger"></div>
+
+          <div class="flex flex-col-reverse gap-2 pt-2 sm:flex-row sm:justify-end">
+            <button id="cancel-generate" class="inline-flex items-center justify-center rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-medium text-foreground">Cancelar</button>
+            <button id="generate" class="inline-flex items-center justify-center rounded-xl bg-foreground px-4 py-2.5 text-sm font-medium text-white">Gerar PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const API_URL = 'https://red-bush-f22b.mauriciosingelo.workers.dev';
+      const TOKEN_KEY = 'rm_token';
+      const EXPIRES_KEY = 'rm_expires_at';
+      let allFiles = [];
+
+      const navItems = [
+        ['Dashboard', '/portal/#/'],
+        ['Clientes', '/portal/#/clientes'],
+        ['Estoque', '/portal/#/estoque'],
+        ['Financeiro', '/portal/#/financeiro'],
+        ['Ordens de serviço', '/portal/#/ordens-servico'],
+        ['Orçamentos', '/portal/#/orcamentos'],
+        ['Propostas', '/portal/propostas.html'],
+      ];
+
+      function renderNav(target) {
+        target.innerHTML = navItems.map(([label, href]) => {
+          const active = label === 'Propostas';
+          return `<a href="${href}" class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${active ? 'bg-white text-foreground shadow-sm ring-1 ring-border' : 'text-muted-foreground hover:bg-white hover:text-foreground'}"><span class="inline-flex h-4 w-4 items-center justify-center text-xs">${label === 'Propostas' ? 'P' : '•'}</span>${label}</a>`;
+        }).join('');
+      }
+
+      renderNav(document.getElementById('desktop-nav'));
+      renderNav(document.getElementById('mobile-nav'));
+
+      async function apiRequest(action, payload = {}) {
+        const token = localStorage.getItem(TOKEN_KEY) || '';
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action, token, ...payload }),
+        });
+
+        const text = await response.text();
+        let parsed;
+        try {
+          parsed = JSON.parse(text);
+        } catch {
+          throw new Error('A API retornou uma resposta inválida.');
+        }
+
+        if (!parsed.ok) {
+          const errorMessage = parsed.error && parsed.error.message ? parsed.error.message : 'Erro na API.';
+          if (/sess[aã]o (inv[aá]lida|expirada)/i.test(errorMessage)) {
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(EXPIRES_KEY);
+            location.href = '/portal/#/login';
+          }
+          throw new Error(errorMessage);
+        }
+
+        return parsed.data;
+      }
+
+      function showMessage(message, kind = 'error') {
+        const box = document.getElementById('message');
+        box.textContent = message;
+        box.className = `mt-4 rounded-2xl border px-4 py-3 text-sm ${kind === 'error' ? 'border-danger/15 bg-danger/10 text-danger' : 'border-border bg-surface-muted text-foreground'}`;
+      }
+
+      function hideMessage() {
+        document.getElementById('message').className = 'mt-4 hidden rounded-2xl border px-4 py-3 text-sm';
+      }
+
+      function formatFileDate(value) {
+        if (!value) return 'Sem data';
+        const parsed = new Date(value);
+        if (Number.isNaN(parsed.getTime())) return value;
+        return parsed.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+      }
+
+      function formatFileSize(value) {
+        const bytes = Number(value || 0);
+        if (!bytes) return '';
+        if (bytes >= 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+        if (bytes >= 1024) return `${Math.round(bytes / 1024)} KB`;
+        return `${bytes} B`;
+      }
+
+      function renderFiles() {
+        const term = document.getElementById('search').value.trim().toLowerCase();
+        const files = allFiles.filter((file) => !term || [file.name, file.createdAt, file.updatedAt].join(' ').toLowerCase().includes(term));
+        const target = document.getElementById('files');
+
+        if (!files.length) {
+          target.innerHTML = '<div class="rounded-2xl border border-border bg-surface-muted px-4 py-6 text-center text-sm text-muted-foreground">Nenhuma proposta encontrada.</div>';
+          return;
+        }
+
+        target.innerHTML = files.map((file) => `
+          <div class="rounded-2xl border border-border bg-surface-muted px-4 py-4">
+            <div class="flex items-start justify-between gap-4">
+              <div class="min-w-0">
+                <p class="truncate text-sm font-semibold text-foreground">${escapeHtml(file.name || 'Proposta')}</p>
+                <p class="mt-1 text-xs text-muted-foreground">${formatFileDate(file.updatedAt || file.createdAt)}${file.sizeBytes ? ` • ${formatFileSize(file.sizeBytes)}` : ''}</p>
+              </div>
+              <a href="${escapeAttribute(file.url || '#')}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center rounded-xl border border-border bg-white px-3 py-2 text-sm font-medium text-foreground">Abrir</a>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      function escapeHtml(value) {
+        return String(value || '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[char]);
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value);
+      }
+
+      async function loadFiles() {
+        hideMessage();
+        const target = document.getElementById('files');
+        target.innerHTML = '<div class="rounded-2xl border border-border bg-surface-muted px-4 py-6 text-center text-sm text-muted-foreground">Carregando propostas...</div>';
+        try {
+          const data = await apiRequest('propostas.list');
+          allFiles = Array.isArray(data) ? data : [];
+          renderFiles();
+        } catch (error) {
+          allFiles = [];
+          renderFiles();
+          showMessage(error.message || 'Erro ao carregar propostas.');
+        }
+      }
+
+      async function loadClientes() {
+        const select = document.getElementById('cliente');
+        select.innerHTML = '<option value="">Carregando clientes...</option>';
+        try {
+          const data = await apiRequest('clientes.list');
+          const clientes = Array.isArray(data) ? data : [];
+          select.innerHTML = '<option value="">Selecione um cliente</option>' + clientes.map((cliente) => {
+            const id = cliente.id != null ? cliente.id : cliente.id_cliente;
+            return `<option value="${escapeAttribute(id)}">${escapeHtml(cliente.nome || '-')}</option>`;
+          }).join('');
+        } catch (error) {
+          select.innerHTML = '<option value="">Erro ao carregar clientes</option>';
+          showFormError(error.message || 'Erro ao carregar clientes.');
+        }
+      }
+
+      function openGenerate() {
+        document.getElementById('generate-modal').classList.remove('hidden');
+        document.getElementById('generate-modal').classList.add('flex');
+        document.getElementById('form-error').classList.add('hidden');
+        loadClientes();
+      }
+
+      function closeGenerate() {
+        const modal = document.getElementById('generate-modal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+
+      function showFormError(message) {
+        const box = document.getElementById('form-error');
+        box.textContent = message;
+        box.classList.remove('hidden');
+      }
+
+      function maskCurrency(value) {
+        const digits = String(value || '').replace(/\D/g, '');
+        if (!digits) return '';
+        return (Number(digits) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+
+      async function generateProposal() {
+        const clienteId = document.getElementById('cliente').value;
+        const valor = document.getElementById('valor').value.trim();
+        const prazo = document.getElementById('prazo').value;
+        const button = document.getElementById('generate');
+
+        if (!clienteId) return showFormError('Selecione um cliente.');
+        if (!valor) return showFormError('Informe o valor da proposta.');
+        if (!prazo) return showFormError('Selecione o prazo.');
+
+        document.getElementById('form-error').classList.add('hidden');
+        button.disabled = true;
+        button.textContent = 'Gerando...';
+
+        try {
+          const data = await apiRequest('propostas.generate', { payload: { clienteId, valor, prazo } });
+          const url = typeof data === 'string' ? data : data && data.url;
+          if (!url) throw new Error('A API não retornou a URL do PDF.');
+          window.open(url, '_blank', 'noopener,noreferrer');
+          document.getElementById('valor').value = '';
+          closeGenerate();
+          await loadFiles();
+        } catch (error) {
+          showFormError(error.message || 'Erro ao gerar proposta.');
+        } finally {
+          button.disabled = false;
+          button.textContent = 'Gerar PDF';
+        }
+      }
+
+      document.getElementById('search').addEventListener('input', renderFiles);
+      document.getElementById('refresh').addEventListener('click', loadFiles);
+      document.getElementById('open-generate').addEventListener('click', openGenerate);
+      document.getElementById('close-generate').addEventListener('click', closeGenerate);
+      document.getElementById('cancel-generate').addEventListener('click', closeGenerate);
+      document.getElementById('generate').addEventListener('click', generateProposal);
+      document.getElementById('valor').addEventListener('input', (event) => { event.target.value = maskCurrency(event.target.value); });
+      document.getElementById('mobile-menu').addEventListener('click', () => document.getElementById('mobile-drawer').classList.remove('hidden'));
+      document.getElementById('mobile-close').addEventListener('click', () => document.getElementById('mobile-drawer').classList.add('hidden'));
+      document.getElementById('logout').addEventListener('click', async () => {
+        try { await apiRequest('auth.logout'); } catch (_) {}
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(EXPIRES_KEY);
+        location.href = '/portal/#/login';
+      });
+
+      if (!localStorage.getItem(TOKEN_KEY)) {
+        location.replace('/portal/#/login');
+      } else {
+        loadFiles();
+      }
+    </script>
+  </body>
+</html>
